@@ -1,0 +1,9 @@
+fastapi==0.143.0
+uvicorn[standard]==0.54.0
+python-dotenv==1.2.4
+deepgram-sdk==7.13.0
+upstash-vector==0.8.0
+certifi==2026.7.22
+httpx==0.28.1
+websockets==16.1.1
+pydantic==2.14.0

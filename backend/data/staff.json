@@ -1,0 +1,30 @@
+[
+  {
+    "staff_id": "ST01",
+    "name": "Rahul",
+    "role": "barber",
+    "specializations": ["barber", "men's stylist", "fade specialist"],
+    "genders_served": ["Male", "Unisex"]
+  },
+  {
+    "staff_id": "ST02",
+    "name": "Amit",
+    "role": "senior barber",
+    "specializations": ["barber", "beard specialist", "senior barber"],
+    "genders_served": ["Male", "Unisex"]
+  },
+  {
+    "staff_id": "ST03",
+    "name": "Priya",
+    "role": "senior stylist",
+    "specializations": ["hair stylist", "colorist", "senior stylist"],
+    "genders_served": ["Female", "Unisex"]
+  },
+  {
+    "staff_id": "ST04",
+    "name": "Neha",
+    "role": "skin therapist",
+    "specializations": ["skin therapist", "beautician", "spa therapist"],
+    "genders_served": ["Female", "Male", "Unisex"]
+  }
+]

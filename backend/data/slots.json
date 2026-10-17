@@ -1,0 +1,1162 @@
+{
+  "timezone": "Asia/Kolkata",
+  "salon_hours": {
+    "open": "10:00 AM",
+    "close": "09:00 PM"
+  },
+  "slot_interval_min": 60,
+  "slots": [
+    {
+      "slot_id": "SL-2026-10-14-1000-ST01",
+      "date": "2026-10-14",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0200-ST01",
+      "date": "2026-10-14",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0001"
+    },
+    {
+      "slot_id": "SL-2026-10-14-0600-ST01",
+      "date": "2026-10-14",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0900-ST01",
+      "date": "2026-10-14",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-1000-ST02",
+      "date": "2026-10-14",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0200-ST02",
+      "date": "2026-10-14",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0600-ST02",
+      "date": "2026-10-14",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0002"
+    },
+    {
+      "slot_id": "SL-2026-10-14-0900-ST02",
+      "date": "2026-10-14",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-1000-ST03",
+      "date": "2026-10-14",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0200-ST03",
+      "date": "2026-10-14",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0600-ST03",
+      "date": "2026-10-14",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0900-ST03",
+      "date": "2026-10-14",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0003"
+    },
+    {
+      "slot_id": "SL-2026-10-14-1000-ST04",
+      "date": "2026-10-14",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0200-ST04",
+      "date": "2026-10-14",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0600-ST04",
+      "date": "2026-10-14",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-14-0900-ST04",
+      "date": "2026-10-14",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-1000-ST01",
+      "date": "2026-10-15",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0200-ST01",
+      "date": "2026-10-15",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0600-ST01",
+      "date": "2026-10-15",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0900-ST01",
+      "date": "2026-10-15",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-1000-ST02",
+      "date": "2026-10-15",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0200-ST02",
+      "date": "2026-10-15",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0011"
+    },
+    {
+      "slot_id": "SL-2026-10-15-0600-ST02",
+      "date": "2026-10-15",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0900-ST02",
+      "date": "2026-10-15",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-20261014-ST02"
+    },
+    {
+      "slot_id": "SL-2026-10-15-1000-ST03",
+      "date": "2026-10-15",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0200-ST03",
+      "date": "2026-10-15",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0600-ST03",
+      "date": "2026-10-15",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0900-ST03",
+      "date": "2026-10-15",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-1000-ST04",
+      "date": "2026-10-15",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0200-ST04",
+      "date": "2026-10-15",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-15-0600-ST04",
+      "date": "2026-10-15",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0012"
+    },
+    {
+      "slot_id": "SL-2026-10-15-0900-ST04",
+      "date": "2026-10-15",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261014-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-16-1000-ST01",
+      "date": "2026-10-16",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0200-ST01",
+      "date": "2026-10-16",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0600-ST01",
+      "date": "2026-10-16",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0900-ST01",
+      "date": "2026-10-16",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0021"
+    },
+    {
+      "slot_id": "SL-2026-10-16-1000-ST02",
+      "date": "2026-10-16",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0200-ST02",
+      "date": "2026-10-16",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0600-ST02",
+      "date": "2026-10-16",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-20261015-ST02"
+    },
+    {
+      "slot_id": "SL-2026-10-16-0900-ST02",
+      "date": "2026-10-16",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-1000-ST03",
+      "date": "2026-10-16",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0022"
+    },
+    {
+      "slot_id": "SL-2026-10-16-0200-ST03",
+      "date": "2026-10-16",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0600-ST03",
+      "date": "2026-10-16",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0900-ST03",
+      "date": "2026-10-16",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-16-1000-ST04",
+      "date": "2026-10-16",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0200-ST04",
+      "date": "2026-10-16",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-16-0600-ST04",
+      "date": "2026-10-16",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261015-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-16-0900-ST04",
+      "date": "2026-10-16",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-1000-ST01",
+      "date": "2026-10-17",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0200-ST01",
+      "date": "2026-10-17",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0600-ST01",
+      "date": "2026-10-17",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0031"
+    },
+    {
+      "slot_id": "SL-2026-10-17-0900-ST01",
+      "date": "2026-10-17",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-1000-ST02",
+      "date": "2026-10-17",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST02"
+    },
+    {
+      "slot_id": "SL-2026-10-17-0200-ST02",
+      "date": "2026-10-17",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0600-ST02",
+      "date": "2026-10-17",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0900-ST02",
+      "date": "2026-10-17",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0032"
+    },
+    {
+      "slot_id": "SL-2026-10-17-1000-ST03",
+      "date": "2026-10-17",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0200-ST03",
+      "date": "2026-10-17",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-17-0600-ST03",
+      "date": "2026-10-17",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0900-ST03",
+      "date": "2026-10-17",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-1000-ST04",
+      "date": "2026-10-17",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-17-0200-ST04",
+      "date": "2026-10-17",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0033"
+    },
+    {
+      "slot_id": "SL-2026-10-17-0600-ST04",
+      "date": "2026-10-17",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261015-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-17-0900-ST04",
+      "date": "2026-10-17",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-18-1000-ST01",
+      "date": "2026-10-18",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0200-ST01",
+      "date": "2026-10-18",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0041"
+    },
+    {
+      "slot_id": "SL-2026-10-18-0600-ST01",
+      "date": "2026-10-18",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0900-ST01",
+      "date": "2026-10-18",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST01"
+    },
+    {
+      "slot_id": "SL-2026-10-18-1000-ST02",
+      "date": "2026-10-18",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0200-ST02",
+      "date": "2026-10-18",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0600-ST02",
+      "date": "2026-10-18",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0042"
+    },
+    {
+      "slot_id": "SL-2026-10-18-0900-ST02",
+      "date": "2026-10-18",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST02"
+    },
+    {
+      "slot_id": "SL-2026-10-18-1000-ST03",
+      "date": "2026-10-18",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0200-ST03",
+      "date": "2026-10-18",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0600-ST03",
+      "date": "2026-10-18",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-18-0900-ST03",
+      "date": "2026-10-18",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-18-1000-ST04",
+      "date": "2026-10-18",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-18-0200-ST04",
+      "date": "2026-10-18",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0600-ST04",
+      "date": "2026-10-18",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-18-0900-ST04",
+      "date": "2026-10-18",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0043"
+    },
+    {
+      "slot_id": "SL-2026-10-19-1000-ST01",
+      "date": "2026-10-19",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0200-ST01",
+      "date": "2026-10-19",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0600-ST01",
+      "date": "2026-10-19",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0900-ST01",
+      "date": "2026-10-19",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST01"
+    },
+    {
+      "slot_id": "SL-2026-10-19-1000-ST02",
+      "date": "2026-10-19",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0051"
+    },
+    {
+      "slot_id": "SL-2026-10-19-0200-ST02",
+      "date": "2026-10-19",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0600-ST02",
+      "date": "2026-10-19",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0900-ST02",
+      "date": "2026-10-19",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-1000-ST03",
+      "date": "2026-10-19",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-19-0200-ST03",
+      "date": "2026-10-19",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0600-ST03",
+      "date": "2026-10-19",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0052"
+    },
+    {
+      "slot_id": "SL-2026-10-19-0900-ST03",
+      "date": "2026-10-19",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-1000-ST04",
+      "date": "2026-10-19",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-20261017-ST04"
+    },
+    {
+      "slot_id": "SL-2026-10-19-0200-ST04",
+      "date": "2026-10-19",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0600-ST04",
+      "date": "2026-10-19",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-19-0900-ST04",
+      "date": "2026-10-19",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-1000-ST01",
+      "date": "2026-10-20",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0200-ST01",
+      "date": "2026-10-20",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0600-ST01",
+      "date": "2026-10-20",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0061"
+    },
+    {
+      "slot_id": "SL-2026-10-20-0900-ST01",
+      "date": "2026-10-20",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-1000-ST02",
+      "date": "2026-10-20",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0200-ST02",
+      "date": "2026-10-20",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0600-ST02",
+      "date": "2026-10-20",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0900-ST02",
+      "date": "2026-10-20",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-1000-ST03",
+      "date": "2026-10-20",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0200-ST03",
+      "date": "2026-10-20",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0062"
+    },
+    {
+      "slot_id": "SL-2026-10-20-0600-ST03",
+      "date": "2026-10-20",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0900-ST03",
+      "date": "2026-10-20",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "booked",
+      "booking_id": "BOOK-20261016-ST03"
+    },
+    {
+      "slot_id": "SL-2026-10-20-1000-ST04",
+      "date": "2026-10-20",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0200-ST04",
+      "date": "2026-10-20",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0600-ST04",
+      "date": "2026-10-20",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-20-0900-ST04",
+      "date": "2026-10-20",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-1000-ST01",
+      "date": "2026-10-21",
+      "time": "10:00 AM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0200-ST01",
+      "date": "2026-10-21",
+      "time": "2:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0600-ST01",
+      "date": "2026-10-21",
+      "time": "6:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0900-ST01",
+      "date": "2026-10-21",
+      "time": "9:00 PM",
+      "staff_id": "ST01",
+      "staff_name": "Rahul",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-1000-ST02",
+      "date": "2026-10-21",
+      "time": "10:00 AM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0200-ST02",
+      "date": "2026-10-21",
+      "time": "2:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0600-ST02",
+      "date": "2026-10-21",
+      "time": "6:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0900-ST02",
+      "date": "2026-10-21",
+      "time": "9:00 PM",
+      "staff_id": "ST02",
+      "staff_name": "Amit",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0071"
+    },
+    {
+      "slot_id": "SL-2026-10-21-1000-ST03",
+      "date": "2026-10-21",
+      "time": "10:00 AM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0200-ST03",
+      "date": "2026-10-21",
+      "time": "2:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0600-ST03",
+      "date": "2026-10-21",
+      "time": "6:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0900-ST03",
+      "date": "2026-10-21",
+      "time": "9:00 PM",
+      "staff_id": "ST03",
+      "staff_name": "Priya",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-1000-ST04",
+      "date": "2026-10-21",
+      "time": "10:00 AM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "booked",
+      "booking_id": "BOOK-EX-0072"
+    },
+    {
+      "slot_id": "SL-2026-10-21-0200-ST04",
+      "date": "2026-10-21",
+      "time": "2:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0600-ST04",
+      "date": "2026-10-21",
+      "time": "6:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    },
+    {
+      "slot_id": "SL-2026-10-21-0900-ST04",
+      "date": "2026-10-21",
+      "time": "9:00 PM",
+      "staff_id": "ST04",
+      "staff_name": "Neha",
+      "status": "available",
+      "booking_id": null
+    }
+  ]
+}

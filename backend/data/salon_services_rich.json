@@ -1,0 +1,1541 @@
+[
+  {
+    "service_id":"S001",
+    "name":"Classic Men's Haircut",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Male",
+    "duration_min":30,
+    "price_inr":350,
+    "description":"A classic men's haircut with consultation, cutting, basic styling and finishing.",
+    "aliases":[
+      "men haircut",
+      "gents haircut",
+      "male haircut",
+      "regular haircut",
+      "classic haircut"
+    ],
+    "search_keywords":[
+      "haircut for men",
+      "short haircut",
+      "regular haircut",
+      "office haircut"
+    ],
+    "suitable_for":[
+      "short hair",
+      "medium hair",
+      "regular grooming"
+    ],
+    "staff_specialization":[
+      "barber",
+      "men's stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Classic Men's Haircut\nCategory: Hair\nSubcategory: Haircut\nGender: Male\nDescription: A classic men's haircut with consultation, cutting, basic styling and finishing.\nAliases: men haircut, gents haircut, male haircut, regular haircut, classic haircut\nSearch keywords: haircut for men, short haircut, regular haircut, office haircut\nSuitable for: short hair, medium hair, regular grooming\nStaff specialization: barber, men's stylist\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S002",
+    "name":"Premium Men's Haircut",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Male",
+    "duration_min":45,
+    "price_inr":600,
+    "description":"A premium men's haircut with detailed consultation, precision cutting, styling and finishing.",
+    "aliases":[
+      "premium haircut",
+      "advanced men's haircut",
+      "luxury haircut"
+    ],
+    "search_keywords":[
+      "premium haircut",
+      "precision haircut",
+      "modern men's haircut"
+    ],
+    "suitable_for":[
+      "style transformation",
+      "detailed haircut",
+      "modern hairstyle"
+    ],
+    "staff_specialization":[
+      "senior barber",
+      "men's stylist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Premium Men's Haircut\nCategory: Hair\nSubcategory: Haircut\nGender: Male\nDescription: A premium men's haircut with detailed consultation, precision cutting, styling and finishing.\nAliases: premium haircut, advanced men's haircut, luxury haircut\nSearch keywords: premium haircut, precision haircut, modern men's haircut\nSuitable for: style transformation, detailed haircut, modern hairstyle\nStaff specialization: senior barber, men's stylist\nService level: premium\nDuration: 45 minutes\n"
+  },
+  {
+    "service_id":"S003",
+    "name":"Fade Haircut",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Male",
+    "duration_min":45,
+    "price_inr":550,
+    "description":"A precision fade haircut with gradual blending around the sides and back, finished with styling.",
+    "aliases":[
+      "fade",
+      "fade cut",
+      "skin fade",
+      "taper fade",
+      "low fade",
+      "mid fade",
+      "high fade"
+    ],
+    "search_keywords":[
+      "fade haircut",
+      "skin fade",
+      "taper",
+      "blending",
+      "modern haircut"
+    ],
+    "suitable_for":[
+      "fade styles",
+      "short sides",
+      "modern hairstyles"
+    ],
+    "staff_specialization":[
+      "fade specialist",
+      "barber"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Fade Haircut\nCategory: Hair\nSubcategory: Haircut\nGender: Male\nDescription: A precision fade haircut with gradual blending around the sides and back, finished with styling.\nAliases: fade, fade cut, skin fade, taper fade, low fade, mid fade, high fade\nSearch keywords: fade haircut, skin fade, taper, blending, modern haircut\nSuitable for: fade styles, short sides, modern hairstyles\nStaff specialization: fade specialist, barber\nService level: premium\nDuration: 45 minutes\n"
+  },
+  {
+    "service_id":"S004",
+    "name":"Beard Trim & Styling",
+    "category":"Beard",
+    "subcategory":"Grooming",
+    "gender":"Male",
+    "duration_min":25,
+    "price_inr":250,
+    "description":"Beard trimming, shaping and styling based on the customer's preferred length and face-framing style.",
+    "aliases":[
+      "beard trim",
+      "beard grooming",
+      "beard shaping",
+      "beard styling"
+    ],
+    "search_keywords":[
+      "beard trim",
+      "beard shape",
+      "beard grooming",
+      "beard styling"
+    ],
+    "suitable_for":[
+      "short beard",
+      "medium beard",
+      "long beard"
+    ],
+    "staff_specialization":[
+      "barber",
+      "beard specialist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Beard Trim & Styling\nCategory: Beard\nSubcategory: Grooming\nGender: Male\nDescription: Beard trimming, shaping and styling based on the customer's preferred length and face-framing style.\nAliases: beard trim, beard grooming, beard shaping, beard styling\nSearch keywords: beard trim, beard shape, beard grooming, beard styling\nSuitable for: short beard, medium beard, long beard\nStaff specialization: barber, beard specialist\nService level: standard\nDuration: 25 minutes\n"
+  },
+  {
+    "service_id":"S005",
+    "name":"Haircut & Beard Combo",
+    "category":"Men's Grooming",
+    "subcategory":"Combo",
+    "gender":"Male",
+    "duration_min":50,
+    "price_inr":550,
+    "description":"Combined men's haircut and beard trimming service performed as a coordinated grooming session.",
+    "aliases":[
+      "haircut beard combo",
+      "hair and beard",
+      "grooming combo",
+      "haircut with beard"
+    ],
+    "search_keywords":[
+      "haircut and beard",
+      "complete grooming",
+      "men grooming combo"
+    ],
+    "suitable_for":[
+      "regular grooming",
+      "complete grooming"
+    ],
+    "staff_specialization":[
+      "barber",
+      "men's stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Haircut & Beard Combo\nCategory: Men's Grooming\nSubcategory: Combo\nGender: Male\nDescription: Combined men's haircut and beard trimming service performed as a coordinated grooming session.\nAliases: haircut beard combo, hair and beard, grooming combo, haircut with beard\nSearch keywords: haircut and beard, complete grooming, men grooming combo\nSuitable for: regular grooming, complete grooming\nStaff specialization: barber, men's stylist\nService level: standard\nDuration: 50 minutes\n"
+  },
+  {
+    "service_id":"S006",
+    "name":"Head Shave",
+    "category":"Hair",
+    "subcategory":"Shaving",
+    "gender":"Male",
+    "duration_min":25,
+    "price_inr":250,
+    "description":"Traditional head shaving service with preparation, shaving and post-service finishing.",
+    "aliases":[
+      "head shave",
+      "full head shave",
+      "bald shave"
+    ],
+    "search_keywords":[
+      "head shave",
+      "bald shave",
+      "clean shave head"
+    ],
+    "suitable_for":[
+      "shaved head",
+      "very short hair"
+    ],
+    "staff_specialization":[
+      "barber"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Head Shave\nCategory: Hair\nSubcategory: Shaving\nGender: Male\nDescription: Traditional head shaving service with preparation, shaving and post-service finishing.\nAliases: head shave, full head shave, bald shave\nSearch keywords: head shave, bald shave, clean shave head\nSuitable for: shaved head, very short hair\nStaff specialization: barber\nService level: standard\nDuration: 25 minutes\n"
+  },
+  {
+    "service_id":"S007",
+    "name":"Hair Color for Men",
+    "category":"Hair",
+    "subcategory":"Color",
+    "gender":"Male",
+    "duration_min":90,
+    "price_inr":1800,
+    "description":"Professional hair-color application for men, including shade consultation and finishing.",
+    "aliases":[
+      "men hair color",
+      "hair colouring men",
+      "hair dye men"
+    ],
+    "search_keywords":[
+      "hair color",
+      "grey coverage",
+      "men hair colour",
+      "hair dye"
+    ],
+    "suitable_for":[
+      "grey coverage",
+      "color change",
+      "hair refresh"
+    ],
+    "staff_specialization":[
+      "colorist",
+      "senior stylist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Hair Color for Men\nCategory: Hair\nSubcategory: Color\nGender: Male\nDescription: Professional hair-color application for men, including shade consultation and finishing.\nAliases: men hair color, hair colouring men, hair dye men\nSearch keywords: hair color, grey coverage, men hair colour, hair dye\nSuitable for: grey coverage, color change, hair refresh\nStaff specialization: colorist, senior stylist\nService level: expert\nDuration: 90 minutes\n"
+  },
+  {
+    "service_id":"S008",
+    "name":"Men's Hair Spa",
+    "category":"Hair",
+    "subcategory":"Treatment",
+    "gender":"Male",
+    "duration_min":60,
+    "price_inr":900,
+    "description":"A conditioning-focused hair treatment with cleansing, treatment application, massage and finishing.",
+    "aliases":[
+      "hair spa men",
+      "men hair treatment",
+      "deep conditioning"
+    ],
+    "search_keywords":[
+      "dry hair",
+      "frizzy hair",
+      "hair nourishment",
+      "conditioning",
+      "hair spa"
+    ],
+    "suitable_for":[
+      "dry-looking hair",
+      "frizzy hair",
+      "damaged-looking hair"
+    ],
+    "staff_specialization":[
+      "hair stylist",
+      "hair therapist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Men's Hair Spa\nCategory: Hair\nSubcategory: Treatment\nGender: Male\nDescription: A conditioning-focused hair treatment with cleansing, treatment application, massage and finishing.\nAliases: hair spa men, men hair treatment, deep conditioning\nSearch keywords: dry hair, frizzy hair, hair nourishment, conditioning, hair spa\nSuitable for: dry-looking hair, frizzy hair, damaged-looking hair\nStaff specialization: hair stylist, hair therapist\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S009",
+    "name":"Women's Haircut",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Female",
+    "duration_min":60,
+    "price_inr":700,
+    "description":"Women's haircut with consultation, precision cutting, finishing and basic styling.",
+    "aliases":[
+      "women haircut",
+      "ladies haircut",
+      "female haircut"
+    ],
+    "search_keywords":[
+      "women haircut",
+      "ladies haircut",
+      "haircut and styling"
+    ],
+    "suitable_for":[
+      "short hair",
+      "medium hair",
+      "long hair"
+    ],
+    "staff_specialization":[
+      "hair stylist",
+      "senior stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Women's Haircut\nCategory: Hair\nSubcategory: Haircut\nGender: Female\nDescription: Women's haircut with consultation, precision cutting, finishing and basic styling.\nAliases: women haircut, ladies haircut, female haircut\nSearch keywords: women haircut, ladies haircut, haircut and styling\nSuitable for: short hair, medium hair, long hair\nStaff specialization: hair stylist, senior stylist\nService level: standard\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S010",
+    "name":"Hair Wash & Blow Dry",
+    "category":"Hair",
+    "subcategory":"Styling",
+    "gender":"Female",
+    "duration_min":35,
+    "price_inr":450,
+    "description":"Hair cleansing followed by blow-drying and basic finish styling.",
+    "aliases":[
+      "blow dry",
+      "wash and blow dry",
+      "hair wash styling"
+    ],
+    "search_keywords":[
+      "blow dry",
+      "hair wash",
+      "quick styling",
+      "smooth finish"
+    ],
+    "suitable_for":[
+      "event preparation",
+      "basic styling",
+      "fresh hair"
+    ],
+    "staff_specialization":[
+      "hair stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Hair Wash & Blow Dry\nCategory: Hair\nSubcategory: Styling\nGender: Female\nDescription: Hair cleansing followed by blow-drying and basic finish styling.\nAliases: blow dry, wash and blow dry, hair wash styling\nSearch keywords: blow dry, hair wash, quick styling, smooth finish\nSuitable for: event preparation, basic styling, fresh hair\nStaff specialization: hair stylist\nService level: standard\nDuration: 35 minutes\n"
+  },
+  {
+    "service_id":"S011",
+    "name":"Women's Hair Styling",
+    "category":"Hair",
+    "subcategory":"Styling",
+    "gender":"Female",
+    "duration_min":60,
+    "price_inr":900,
+    "description":"Professional hairstyle creation for parties, events or personal occasions.",
+    "aliases":[
+      "hair styling",
+      "event hairstyle",
+      "party hairstyle",
+      "hairdo"
+    ],
+    "search_keywords":[
+      "party hairstyle",
+      "event hair",
+      "hairdo",
+      "styling"
+    ],
+    "suitable_for":[
+      "parties",
+      "events",
+      "special occasions"
+    ],
+    "staff_specialization":[
+      "hair stylist",
+      "senior stylist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Women's Hair Styling\nCategory: Hair\nSubcategory: Styling\nGender: Female\nDescription: Professional hairstyle creation for parties, events or personal occasions.\nAliases: hair styling, event hairstyle, party hairstyle, hairdo\nSearch keywords: party hairstyle, event hair, hairdo, styling\nSuitable for: parties, events, special occasions\nStaff specialization: hair stylist, senior stylist\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S012",
+    "name":"Keratin Hair Treatment",
+    "category":"Hair",
+    "subcategory":"Treatment",
+    "gender":"Female",
+    "duration_min":210,
+    "price_inr":6000,
+    "description":"A salon hair-smoothing treatment involving preparation, product application, processing and finishing.",
+    "aliases":[
+      "keratin",
+      "keratin treatment",
+      "keratin smoothing"
+    ],
+    "search_keywords":[
+      "keratin",
+      "hair smoothing",
+      "frizz control",
+      "smoothing treatment"
+    ],
+    "suitable_for":[
+      "frizzy hair",
+      "unruly hair",
+      "smoothing preference"
+    ],
+    "staff_specialization":[
+      "senior stylist",
+      "hair treatment specialist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Keratin Hair Treatment\nCategory: Hair\nSubcategory: Treatment\nGender: Female\nDescription: A salon hair-smoothing treatment involving preparation, product application, processing and finishing.\nAliases: keratin, keratin treatment, keratin smoothing\nSearch keywords: keratin, hair smoothing, frizz control, smoothing treatment\nSuitable for: frizzy hair, unruly hair, smoothing preference\nStaff specialization: senior stylist, hair treatment specialist\nService level: expert\nDuration: 210 minutes\n"
+  },
+  {
+    "service_id":"S013",
+    "name":"Hair Smoothening",
+    "category":"Hair",
+    "subcategory":"Treatment",
+    "gender":"Female",
+    "duration_min":180,
+    "price_inr":4500,
+    "description":"A salon smoothing service designed to create a smoother, more manageable hair finish.",
+    "aliases":[
+      "smoothening",
+      "hair smoothing",
+      "smooth hair treatment"
+    ],
+    "search_keywords":[
+      "smooth hair",
+      "frizz control",
+      "manageable hair",
+      "smoothing"
+    ],
+    "suitable_for":[
+      "frizzy hair",
+      "unruly hair",
+      "smoother finish"
+    ],
+    "staff_specialization":[
+      "senior stylist",
+      "hair treatment specialist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Hair Smoothening\nCategory: Hair\nSubcategory: Treatment\nGender: Female\nDescription: A salon smoothing service designed to create a smoother, more manageable hair finish.\nAliases: smoothening, hair smoothing, smooth hair treatment\nSearch keywords: smooth hair, frizz control, manageable hair, smoothing\nSuitable for: frizzy hair, unruly hair, smoother finish\nStaff specialization: senior stylist, hair treatment specialist\nService level: expert\nDuration: 180 minutes\n"
+  },
+  {
+    "service_id":"S014",
+    "name":"Women's Hair Coloring",
+    "category":"Hair",
+    "subcategory":"Color",
+    "gender":"Female",
+    "duration_min":120,
+    "price_inr":3000,
+    "description":"Professional hair-color service with shade consultation, application and finishing.",
+    "aliases":[
+      "women hair color",
+      "hair colouring",
+      "global hair color"
+    ],
+    "search_keywords":[
+      "hair color",
+      "global color",
+      "grey coverage",
+      "fashion color"
+    ],
+    "suitable_for":[
+      "grey coverage",
+      "global color",
+      "color refresh"
+    ],
+    "staff_specialization":[
+      "colorist",
+      "senior stylist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Women's Hair Coloring\nCategory: Hair\nSubcategory: Color\nGender: Female\nDescription: Professional hair-color service with shade consultation, application and finishing.\nAliases: women hair color, hair colouring, global hair color\nSearch keywords: hair color, global color, grey coverage, fashion color\nSuitable for: grey coverage, global color, color refresh\nStaff specialization: colorist, senior stylist\nService level: expert\nDuration: 120 minutes\n"
+  },
+  {
+    "service_id":"S015",
+    "name":"Hair Highlights",
+    "category":"Hair",
+    "subcategory":"Color",
+    "gender":"Female",
+    "duration_min":150,
+    "price_inr":3500,
+    "description":"Strategic hair highlighting service to add lighter sections and dimension to the hairstyle.",
+    "aliases":[
+      "highlights",
+      "hair highlights",
+      "streaks",
+      "balayage style highlights"
+    ],
+    "search_keywords":[
+      "highlights",
+      "streaks",
+      "dimension",
+      "lighter hair"
+    ],
+    "suitable_for":[
+      "partial color",
+      "dimension",
+      "fashion hair color"
+    ],
+    "staff_specialization":[
+      "colorist",
+      "senior stylist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Hair Highlights\nCategory: Hair\nSubcategory: Color\nGender: Female\nDescription: Strategic hair highlighting service to add lighter sections and dimension to the hairstyle.\nAliases: highlights, hair highlights, streaks, balayage style highlights\nSearch keywords: highlights, streaks, dimension, lighter hair\nSuitable for: partial color, dimension, fashion hair color\nStaff specialization: colorist, senior stylist\nService level: expert\nDuration: 150 minutes\n"
+  },
+  {
+    "service_id":"S016",
+    "name":"Express Facial",
+    "category":"Skin",
+    "subcategory":"Facial",
+    "gender":"Unisex",
+    "duration_min":30,
+    "price_inr":700,
+    "description":"A shorter facial session combining cleansing, exfoliation, massage and a finishing mask.",
+    "aliases":[
+      "quick facial",
+      "express cleanup facial",
+      "mini facial"
+    ],
+    "search_keywords":[
+      "quick facial",
+      "basic facial",
+      "fresh skin",
+      "short facial"
+    ],
+    "suitable_for":[
+      "limited time",
+      "basic skin grooming"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "skin therapist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Express Facial\nCategory: Skin\nSubcategory: Facial\nGender: Unisex\nDescription: A shorter facial session combining cleansing, exfoliation, massage and a finishing mask.\nAliases: quick facial, express cleanup facial, mini facial\nSearch keywords: quick facial, basic facial, fresh skin, short facial\nSuitable for: limited time, basic skin grooming\nStaff specialization: beautician, skin therapist\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S017",
+    "name":"Deep Cleansing Facial",
+    "category":"Skin",
+    "subcategory":"Facial",
+    "gender":"Unisex",
+    "duration_min":60,
+    "price_inr":1200,
+    "description":"A salon facial focused on thorough cleansing, gentle exfoliation, massage and a mask.",
+    "aliases":[
+      "deep cleansing facial",
+      "deep clean facial",
+      "cleansing facial"
+    ],
+    "search_keywords":[
+      "deep cleansing",
+      "oily-looking skin",
+      "congested-looking skin",
+      "facial"
+    ],
+    "suitable_for":[
+      "oily-looking skin",
+      "congested-looking skin",
+      "regular facial care"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "skin therapist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Deep Cleansing Facial\nCategory: Skin\nSubcategory: Facial\nGender: Unisex\nDescription: A salon facial focused on thorough cleansing, gentle exfoliation, massage and a mask.\nAliases: deep cleansing facial, deep clean facial, cleansing facial\nSearch keywords: deep cleansing, oily-looking skin, congested-looking skin, facial\nSuitable for: oily-looking skin, congested-looking skin, regular facial care\nStaff specialization: beautician, skin therapist\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S018",
+    "name":"Hydration Facial",
+    "category":"Skin",
+    "subcategory":"Facial",
+    "gender":"Unisex",
+    "duration_min":60,
+    "price_inr":1500,
+    "description":"A hydrating salon facial using cleansing, gentle exfoliation, massage and moisturizing steps.",
+    "aliases":[
+      "hydrating facial",
+      "hydration facial",
+      "moisturizing facial",
+      "glass skin facial"
+    ],
+    "search_keywords":[
+      "dry skin",
+      "dehydrated-looking skin",
+      "hydration",
+      "glow"
+    ],
+    "suitable_for":[
+      "dry-looking skin",
+      "dehydrated-looking skin",
+      "dull-looking skin"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "skin therapist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Hydration Facial\nCategory: Skin\nSubcategory: Facial\nGender: Unisex\nDescription: A hydrating salon facial using cleansing, gentle exfoliation, massage and moisturizing steps.\nAliases: hydrating facial, hydration facial, moisturizing facial, glass skin facial\nSearch keywords: dry skin, dehydrated-looking skin, hydration, glow\nSuitable for: dry-looking skin, dehydrated-looking skin, dull-looking skin\nStaff specialization: beautician, skin therapist\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S019",
+    "name":"Detan Treatment",
+    "category":"Skin",
+    "subcategory":"Detan",
+    "gender":"Unisex",
+    "duration_min":40,
+    "price_inr":500,
+    "description":"A salon detan service involving cleansing, product application and finishing care for a more even-looking appearance.",
+    "aliases":[
+      "detan",
+      "de-tan",
+      "tan removal facial",
+      "detan cleanup"
+    ],
+    "search_keywords":[
+      "detan",
+      "tan care",
+      "uneven-looking skin",
+      "skin refresh"
+    ],
+    "suitable_for":[
+      "sun-exposed skin",
+      "uneven-looking complexion"
+    ],
+    "staff_specialization":[
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Detan Treatment\nCategory: Skin\nSubcategory: Detan\nGender: Unisex\nDescription: A salon detan service involving cleansing, product application and finishing care for a more even-looking appearance.\nAliases: detan, de-tan, tan removal facial, detan cleanup\nSearch keywords: detan, tan care, uneven-looking skin, skin refresh\nSuitable for: sun-exposed skin, uneven-looking complexion\nStaff specialization: beautician\nService level: standard\nDuration: 40 minutes\n"
+  },
+  {
+    "service_id":"S020",
+    "name":"Charcoal Cleanup",
+    "category":"Skin",
+    "subcategory":"Cleanup",
+    "gender":"Unisex",
+    "duration_min":35,
+    "price_inr":650,
+    "description":"A cleansing-focused salon treatment with exfoliation and a charcoal-based finishing step.",
+    "aliases":[
+      "charcoal cleanup",
+      "charcoal facial",
+      "detox cleanup"
+    ],
+    "search_keywords":[
+      "charcoal",
+      "cleanup",
+      "deep cleanse",
+      "fresh skin"
+    ],
+    "suitable_for":[
+      "oily-looking skin",
+      "dull-looking skin",
+      "quick grooming"
+    ],
+    "staff_specialization":[
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Charcoal Cleanup\nCategory: Skin\nSubcategory: Cleanup\nGender: Unisex\nDescription: A cleansing-focused salon treatment with exfoliation and a charcoal-based finishing step.\nAliases: charcoal cleanup, charcoal facial, detox cleanup\nSearch keywords: charcoal, cleanup, deep cleanse, fresh skin\nSuitable for: oily-looking skin, dull-looking skin, quick grooming\nStaff specialization: beautician\nService level: standard\nDuration: 35 minutes\n"
+  },
+  {
+    "service_id":"S021",
+    "name":"Premium Glow Facial",
+    "category":"Skin",
+    "subcategory":"Facial",
+    "gender":"Unisex",
+    "duration_min":75,
+    "price_inr":2200,
+    "description":"A premium facial combining cleansing, exfoliation, massage, mask and finishing care for a refreshed appearance.",
+    "aliases":[
+      "glow facial",
+      "premium facial",
+      "radiance facial",
+      "party facial"
+    ],
+    "search_keywords":[
+      "glow",
+      "radiance",
+      "event facial",
+      "fresh appearance"
+    ],
+    "suitable_for":[
+      "events",
+      "dull-looking skin",
+      "special occasions"
+    ],
+    "staff_specialization":[
+      "senior beautician",
+      "skin therapist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Premium Glow Facial\nCategory: Skin\nSubcategory: Facial\nGender: Unisex\nDescription: A premium facial combining cleansing, exfoliation, massage, mask and finishing care for a refreshed appearance.\nAliases: glow facial, premium facial, radiance facial, party facial\nSearch keywords: glow, radiance, event facial, fresh appearance\nSuitable for: events, dull-looking skin, special occasions\nStaff specialization: senior beautician, skin therapist\nService level: premium\nDuration: 75 minutes\n"
+  },
+  {
+    "service_id":"S022",
+    "name":"Eyebrow Threading",
+    "category":"Beauty",
+    "subcategory":"Threading",
+    "gender":"Female",
+    "duration_min":15,
+    "price_inr":120,
+    "description":"Eyebrow shaping using threading to create a clean, defined brow outline.",
+    "aliases":[
+      "brow threading",
+      "eyebrow shaping",
+      "brows"
+    ],
+    "search_keywords":[
+      "eyebrow",
+      "brow shape",
+      "threading"
+    ],
+    "suitable_for":[
+      "brow grooming",
+      "regular maintenance"
+    ],
+    "staff_specialization":[
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Eyebrow Threading\nCategory: Beauty\nSubcategory: Threading\nGender: Female\nDescription: Eyebrow shaping using threading to create a clean, defined brow outline.\nAliases: brow threading, eyebrow shaping, brows\nSearch keywords: eyebrow, brow shape, threading\nSuitable for: brow grooming, regular maintenance\nStaff specialization: beautician\nService level: standard\nDuration: 15 minutes\n"
+  },
+  {
+    "service_id":"S023",
+    "name":"Upper Lip Threading",
+    "category":"Beauty",
+    "subcategory":"Threading",
+    "gender":"Female",
+    "duration_min":10,
+    "price_inr":80,
+    "description":"Quick facial-hair removal around the upper-lip area using threading.",
+    "aliases":[
+      "upper lip",
+      "lip threading",
+      "upper lip threading"
+    ],
+    "search_keywords":[
+      "upper lip hair",
+      "threading",
+      "facial hair removal"
+    ],
+    "suitable_for":[
+      "facial hair grooming"
+    ],
+    "staff_specialization":[
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Upper Lip Threading\nCategory: Beauty\nSubcategory: Threading\nGender: Female\nDescription: Quick facial-hair removal around the upper-lip area using threading.\nAliases: upper lip, lip threading, upper lip threading\nSearch keywords: upper lip hair, threading, facial hair removal\nSuitable for: facial hair grooming\nStaff specialization: beautician\nService level: standard\nDuration: 10 minutes\n"
+  },
+  {
+    "service_id":"S024",
+    "name":"Full Arms Waxing",
+    "category":"Waxing",
+    "subcategory":"Body Waxing",
+    "gender":"Female",
+    "duration_min":30,
+    "price_inr":450,
+    "description":"Waxing service covering the arms for temporary hair removal and a smooth skin finish.",
+    "aliases":[
+      "arms waxing",
+      "full arm wax",
+      "arm wax"
+    ],
+    "search_keywords":[
+      "arms waxing",
+      "hair removal",
+      "full arms"
+    ],
+    "suitable_for":[
+      "arm hair removal"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "waxing specialist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Full Arms Waxing\nCategory: Waxing\nSubcategory: Body Waxing\nGender: Female\nDescription: Waxing service covering the arms for temporary hair removal and a smooth skin finish.\nAliases: arms waxing, full arm wax, arm wax\nSearch keywords: arms waxing, hair removal, full arms\nSuitable for: arm hair removal\nStaff specialization: beautician, waxing specialist\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S025",
+    "name":"Full Legs Waxing",
+    "category":"Waxing",
+    "subcategory":"Body Waxing",
+    "gender":"Female",
+    "duration_min":45,
+    "price_inr":650,
+    "description":"Waxing service covering both legs for temporary hair removal.",
+    "aliases":[
+      "legs waxing",
+      "full leg wax",
+      "leg wax"
+    ],
+    "search_keywords":[
+      "legs waxing",
+      "hair removal",
+      "full legs"
+    ],
+    "suitable_for":[
+      "leg hair removal"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "waxing specialist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Full Legs Waxing\nCategory: Waxing\nSubcategory: Body Waxing\nGender: Female\nDescription: Waxing service covering both legs for temporary hair removal.\nAliases: legs waxing, full leg wax, leg wax\nSearch keywords: legs waxing, hair removal, full legs\nSuitable for: leg hair removal\nStaff specialization: beautician, waxing specialist\nService level: standard\nDuration: 45 minutes\n"
+  },
+  {
+    "service_id":"S026",
+    "name":"Full Body Waxing",
+    "category":"Waxing",
+    "subcategory":"Body Waxing",
+    "gender":"Female",
+    "duration_min":120,
+    "price_inr":2200,
+    "description":"A full-body waxing session covering multiple body areas according to the salon's package definition.",
+    "aliases":[
+      "full body wax",
+      "body waxing",
+      "complete waxing"
+    ],
+    "search_keywords":[
+      "full body waxing",
+      "body hair removal",
+      "waxing package"
+    ],
+    "suitable_for":[
+      "full body grooming"
+    ],
+    "staff_specialization":[
+      "senior beautician",
+      "waxing specialist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Full Body Waxing\nCategory: Waxing\nSubcategory: Body Waxing\nGender: Female\nDescription: A full-body waxing session covering multiple body areas according to the salon's package definition.\nAliases: full body wax, body waxing, complete waxing\nSearch keywords: full body waxing, body hair removal, waxing package\nSuitable for: full body grooming\nStaff specialization: senior beautician, waxing specialist\nService level: premium\nDuration: 120 minutes\n"
+  },
+  {
+    "service_id":"S027",
+    "name":"Basic Manicure",
+    "category":"Nails",
+    "subcategory":"Manicure",
+    "gender":"Unisex",
+    "duration_min":45,
+    "price_inr":650,
+    "description":"Hand and nail grooming including shaping, cuticle care, basic massage and polish.",
+    "aliases":[
+      "manicure",
+      "basic mani",
+      "hand grooming"
+    ],
+    "search_keywords":[
+      "manicure",
+      "nail grooming",
+      "hand care"
+    ],
+    "suitable_for":[
+      "regular nail maintenance",
+      "hand grooming"
+    ],
+    "staff_specialization":[
+      "nail technician",
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Basic Manicure\nCategory: Nails\nSubcategory: Manicure\nGender: Unisex\nDescription: Hand and nail grooming including shaping, cuticle care, basic massage and polish.\nAliases: manicure, basic mani, hand grooming\nSearch keywords: manicure, nail grooming, hand care\nSuitable for: regular nail maintenance, hand grooming\nStaff specialization: nail technician, beautician\nService level: standard\nDuration: 45 minutes\n"
+  },
+  {
+    "service_id":"S028",
+    "name":"Spa Manicure",
+    "category":"Nails",
+    "subcategory":"Manicure",
+    "gender":"Unisex",
+    "duration_min":60,
+    "price_inr":1050,
+    "description":"A relaxing manicure with extended hand-care steps, massage and finishing polish.",
+    "aliases":[
+      "spa manicure",
+      "luxury manicure",
+      "relaxing manicure"
+    ],
+    "search_keywords":[
+      "spa manicure",
+      "relaxing hand care",
+      "hydrating manicure"
+    ],
+    "suitable_for":[
+      "relaxation",
+      "dry-looking hands",
+      "premium nail care"
+    ],
+    "staff_specialization":[
+      "nail technician"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Spa Manicure\nCategory: Nails\nSubcategory: Manicure\nGender: Unisex\nDescription: A relaxing manicure with extended hand-care steps, massage and finishing polish.\nAliases: spa manicure, luxury manicure, relaxing manicure\nSearch keywords: spa manicure, relaxing hand care, hydrating manicure\nSuitable for: relaxation, dry-looking hands, premium nail care\nStaff specialization: nail technician\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S029",
+    "name":"Basic Pedicure",
+    "category":"Nails",
+    "subcategory":"Pedicure",
+    "gender":"Unisex",
+    "duration_min":60,
+    "price_inr":850,
+    "description":"Foot and toenail grooming including soaking, shaping, cuticle care, massage and polish.",
+    "aliases":[
+      "pedicure",
+      "basic pedi",
+      "foot grooming"
+    ],
+    "search_keywords":[
+      "pedicure",
+      "foot care",
+      "toenail grooming"
+    ],
+    "suitable_for":[
+      "regular foot care",
+      "nail maintenance"
+    ],
+    "staff_specialization":[
+      "nail technician",
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Basic Pedicure\nCategory: Nails\nSubcategory: Pedicure\nGender: Unisex\nDescription: Foot and toenail grooming including soaking, shaping, cuticle care, massage and polish.\nAliases: pedicure, basic pedi, foot grooming\nSearch keywords: pedicure, foot care, toenail grooming\nSuitable for: regular foot care, nail maintenance\nStaff specialization: nail technician, beautician\nService level: standard\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S030",
+    "name":"Spa Pedicure",
+    "category":"Nails",
+    "subcategory":"Pedicure",
+    "gender":"Unisex",
+    "duration_min":80,
+    "price_inr":1300,
+    "description":"An extended pedicure with foot-care, massage and relaxation-focused finishing steps.",
+    "aliases":[
+      "spa pedicure",
+      "luxury pedicure",
+      "relaxing pedicure"
+    ],
+    "search_keywords":[
+      "spa pedicure",
+      "foot massage",
+      "relaxation",
+      "premium pedicure"
+    ],
+    "suitable_for":[
+      "relaxation",
+      "premium foot care"
+    ],
+    "staff_specialization":[
+      "nail technician"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Spa Pedicure\nCategory: Nails\nSubcategory: Pedicure\nGender: Unisex\nDescription: An extended pedicure with foot-care, massage and relaxation-focused finishing steps.\nAliases: spa pedicure, luxury pedicure, relaxing pedicure\nSearch keywords: spa pedicure, foot massage, relaxation, premium pedicure\nSuitable for: relaxation, premium foot care\nStaff specialization: nail technician\nService level: premium\nDuration: 80 minutes\n"
+  },
+  {
+    "service_id":"S031",
+    "name":"Gel Nail Polish",
+    "category":"Nails",
+    "subcategory":"Nail Polish",
+    "gender":"Female",
+    "duration_min":60,
+    "price_inr":900,
+    "description":"Gel polish application with nail preparation, color application and curing for a durable finish.",
+    "aliases":[
+      "gel polish",
+      "gel manicure",
+      "gel nails"
+    ],
+    "search_keywords":[
+      "gel nails",
+      "gel polish",
+      "long lasting polish"
+    ],
+    "suitable_for":[
+      "gel finish",
+      "special occasions",
+      "durable polish"
+    ],
+    "staff_specialization":[
+      "nail technician"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Gel Nail Polish\nCategory: Nails\nSubcategory: Nail Polish\nGender: Female\nDescription: Gel polish application with nail preparation, color application and curing for a durable finish.\nAliases: gel polish, gel manicure, gel nails\nSearch keywords: gel nails, gel polish, long lasting polish\nSuitable for: gel finish, special occasions, durable polish\nStaff specialization: nail technician\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S032",
+    "name":"Nail Art",
+    "category":"Nails",
+    "subcategory":"Nail Art",
+    "gender":"Female",
+    "duration_min":90,
+    "price_inr":1800,
+    "description":"Decorative nail design service customized to the selected pattern, colors and style.",
+    "aliases":[
+      "nail design",
+      "nail art",
+      "custom nail art"
+    ],
+    "search_keywords":[
+      "nail art",
+      "nail design",
+      "custom nails",
+      "party nails"
+    ],
+    "suitable_for":[
+      "events",
+      "fashion nails",
+      "custom designs"
+    ],
+    "staff_specialization":[
+      "nail artist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Nail Art\nCategory: Nails\nSubcategory: Nail Art\nGender: Female\nDescription: Decorative nail design service customized to the selected pattern, colors and style.\nAliases: nail design, nail art, custom nail art\nSearch keywords: nail art, nail design, custom nails, party nails\nSuitable for: events, fashion nails, custom designs\nStaff specialization: nail artist\nService level: expert\nDuration: 90 minutes\n"
+  },
+  {
+    "service_id":"S033",
+    "name":"Party Makeup",
+    "category":"Makeup",
+    "subcategory":"Occasion Makeup",
+    "gender":"Female",
+    "duration_min":120,
+    "price_inr":5000,
+    "description":"Complete makeup look for parties and social events including base, eye makeup, lips and finishing.",
+    "aliases":[
+      "party makeup",
+      "event makeup",
+      "occasion makeup"
+    ],
+    "search_keywords":[
+      "party makeup",
+      "event makeup",
+      "evening makeup"
+    ],
+    "suitable_for":[
+      "parties",
+      "events",
+      "celebrations"
+    ],
+    "staff_specialization":[
+      "makeup artist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Party Makeup\nCategory: Makeup\nSubcategory: Occasion Makeup\nGender: Female\nDescription: Complete makeup look for parties and social events including base, eye makeup, lips and finishing.\nAliases: party makeup, event makeup, occasion makeup\nSearch keywords: party makeup, event makeup, evening makeup\nSuitable for: parties, events, celebrations\nStaff specialization: makeup artist\nService level: expert\nDuration: 120 minutes\n"
+  },
+  {
+    "service_id":"S034",
+    "name":"Bridal Makeup",
+    "category":"Makeup",
+    "subcategory":"Bridal",
+    "gender":"Female",
+    "duration_min":180,
+    "price_inr":10000,
+    "description":"A detailed bridal makeup session planned around the wedding look, outfit and preferred makeup style.",
+    "aliases":[
+      "bridal makeup",
+      "wedding makeup",
+      "bride makeup"
+    ],
+    "search_keywords":[
+      "bridal makeup",
+      "wedding makeup",
+      "bride",
+      "traditional bridal"
+    ],
+    "suitable_for":[
+      "weddings",
+      "bridal events"
+    ],
+    "staff_specialization":[
+      "bridal makeup artist",
+      "senior makeup artist"
+    ],
+    "service_level":"expert",
+    "embedding_text":"Service: Bridal Makeup\nCategory: Makeup\nSubcategory: Bridal\nGender: Female\nDescription: A detailed bridal makeup session planned around the wedding look, outfit and preferred makeup style.\nAliases: bridal makeup, wedding makeup, bride makeup\nSearch keywords: bridal makeup, wedding makeup, bride, traditional bridal\nSuitable for: weddings, bridal events\nStaff specialization: bridal makeup artist, senior makeup artist\nService level: expert\nDuration: 180 minutes\n"
+  },
+  {
+    "service_id":"S035",
+    "name":"Saree Draping",
+    "category":"Makeup",
+    "subcategory":"Draping",
+    "gender":"Female",
+    "duration_min":30,
+    "price_inr":500,
+    "description":"Professional saree draping service based on the selected drape style and occasion.",
+    "aliases":[
+      "saree draping",
+      "sari draping",
+      "saree styling"
+    ],
+    "search_keywords":[
+      "saree draping",
+      "wedding saree",
+      "event styling"
+    ],
+    "suitable_for":[
+      "weddings",
+      "parties",
+      "traditional events"
+    ],
+    "staff_specialization":[
+      "stylist",
+      "makeup artist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Saree Draping\nCategory: Makeup\nSubcategory: Draping\nGender: Female\nDescription: Professional saree draping service based on the selected drape style and occasion.\nAliases: saree draping, sari draping, saree styling\nSearch keywords: saree draping, wedding saree, event styling\nSuitable for: weddings, parties, traditional events\nStaff specialization: stylist, makeup artist\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S036",
+    "name":"Head Massage",
+    "category":"Wellness",
+    "subcategory":"Massage",
+    "gender":"Unisex",
+    "duration_min":30,
+    "price_inr":500,
+    "description":"Relaxation-focused scalp and head massage using the salon's selected massage technique and product.",
+    "aliases":[
+      "head massage",
+      "scalp massage",
+      "hair massage"
+    ],
+    "search_keywords":[
+      "head massage",
+      "scalp massage",
+      "relaxation",
+      "stress relief"
+    ],
+    "suitable_for":[
+      "relaxation",
+      "scalp massage preference"
+    ],
+    "staff_specialization":[
+      "massage therapist",
+      "barber",
+      "stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Head Massage\nCategory: Wellness\nSubcategory: Massage\nGender: Unisex\nDescription: Relaxation-focused scalp and head massage using the salon's selected massage technique and product.\nAliases: head massage, scalp massage, hair massage\nSearch keywords: head massage, scalp massage, relaxation, stress relief\nSuitable for: relaxation, scalp massage preference\nStaff specialization: massage therapist, barber, stylist\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S037",
+    "name":"Neck & Shoulder Massage",
+    "category":"Wellness",
+    "subcategory":"Massage",
+    "gender":"Unisex",
+    "duration_min":20,
+    "price_inr":400,
+    "description":"Short relaxation massage focused on the neck and shoulder area.",
+    "aliases":[
+      "shoulder massage",
+      "neck massage",
+      "neck shoulder massage"
+    ],
+    "search_keywords":[
+      "shoulder massage",
+      "neck massage",
+      "quick massage",
+      "relaxation"
+    ],
+    "suitable_for":[
+      "short relaxation session"
+    ],
+    "staff_specialization":[
+      "massage therapist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Neck & Shoulder Massage\nCategory: Wellness\nSubcategory: Massage\nGender: Unisex\nDescription: Short relaxation massage focused on the neck and shoulder area.\nAliases: shoulder massage, neck massage, neck shoulder massage\nSearch keywords: shoulder massage, neck massage, quick massage, relaxation\nSuitable for: short relaxation session\nStaff specialization: massage therapist\nService level: standard\nDuration: 20 minutes\n"
+  },
+  {
+    "service_id":"S038",
+    "name":"Relaxation Massage",
+    "category":"Wellness",
+    "subcategory":"Massage",
+    "gender":"Unisex",
+    "duration_min":60,
+    "price_inr":1800,
+    "description":"A full-session relaxation massage designed as a general wellness and relaxation service.",
+    "aliases":[
+      "relaxing massage",
+      "body massage",
+      "wellness massage"
+    ],
+    "search_keywords":[
+      "relaxation",
+      "body massage",
+      "wellness",
+      "spa"
+    ],
+    "suitable_for":[
+      "relaxation",
+      "wellness experience"
+    ],
+    "staff_specialization":[
+      "massage therapist",
+      "spa therapist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Relaxation Massage\nCategory: Wellness\nSubcategory: Massage\nGender: Unisex\nDescription: A full-session relaxation massage designed as a general wellness and relaxation service.\nAliases: relaxing massage, body massage, wellness massage\nSearch keywords: relaxation, body massage, wellness, spa\nSuitable for: relaxation, wellness experience\nStaff specialization: massage therapist, spa therapist\nService level: premium\nDuration: 60 minutes\n"
+  },
+  {
+    "service_id":"S039",
+    "name":"Kids Haircut",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Unisex",
+    "duration_min":25,
+    "price_inr":300,
+    "description":"Child-friendly haircut with a simple style and age-appropriate grooming experience.",
+    "aliases":[
+      "kids haircut",
+      "children haircut",
+      "child haircut"
+    ],
+    "search_keywords":[
+      "kids haircut",
+      "children haircut",
+      "boy haircut",
+      "girl haircut"
+    ],
+    "suitable_for":[
+      "children",
+      "kids grooming"
+    ],
+    "staff_specialization":[
+      "kids barber",
+      "barber"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Kids Haircut\nCategory: Hair\nSubcategory: Haircut\nGender: Unisex\nDescription: Child-friendly haircut with a simple style and age-appropriate grooming experience.\nAliases: kids haircut, children haircut, child haircut\nSearch keywords: kids haircut, children haircut, boy haircut, girl haircut\nSuitable for: children, kids grooming\nStaff specialization: kids barber, barber\nService level: standard\nDuration: 25 minutes\n"
+  },
+  {
+    "service_id":"S040",
+    "name":"Kids Haircut & Styling",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Unisex",
+    "duration_min":35,
+    "price_inr":450,
+    "description":"Kids haircut with additional styling and finishing for a more styled look.",
+    "aliases":[
+      "kids styling",
+      "children haircut styling"
+    ],
+    "search_keywords":[
+      "kids haircut",
+      "kids hairstyle",
+      "children styling"
+    ],
+    "suitable_for":[
+      "children",
+      "special occasions"
+    ],
+    "staff_specialization":[
+      "kids barber",
+      "stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Kids Haircut & Styling\nCategory: Hair\nSubcategory: Haircut\nGender: Unisex\nDescription: Kids haircut with additional styling and finishing for a more styled look.\nAliases: kids styling, children haircut styling\nSearch keywords: kids haircut, kids hairstyle, children styling\nSuitable for: children, special occasions\nStaff specialization: kids barber, stylist\nService level: standard\nDuration: 35 minutes\n"
+  },
+  {
+    "service_id":"S041",
+    "name":"Grooming Essentials Combo",
+    "category":"Packages",
+    "subcategory":"Men's Combo",
+    "gender":"Male",
+    "duration_min":65,
+    "price_inr":700,
+    "description":"Combined haircut, beard grooming and short head massage for a complete men's grooming session.",
+    "aliases":[
+      "grooming combo",
+      "men grooming package",
+      "haircut beard massage"
+    ],
+    "search_keywords":[
+      "complete grooming",
+      "haircut beard",
+      "men package"
+    ],
+    "suitable_for":[
+      "complete grooming",
+      "regular maintenance"
+    ],
+    "staff_specialization":[
+      "barber"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Grooming Essentials Combo\nCategory: Packages\nSubcategory: Men's Combo\nGender: Male\nDescription: Combined haircut, beard grooming and short head massage for a complete men's grooming session.\nAliases: grooming combo, men grooming package, haircut beard massage\nSearch keywords: complete grooming, haircut beard, men package\nSuitable for: complete grooming, regular maintenance\nStaff specialization: barber\nService level: premium\nDuration: 65 minutes\n"
+  },
+  {
+    "service_id":"S042",
+    "name":"Manicure & Pedicure Combo",
+    "category":"Packages",
+    "subcategory":"Nail Combo",
+    "gender":"Unisex",
+    "duration_min":100,
+    "price_inr":1350,
+    "description":"Combined manicure and pedicure session for hand and foot nail grooming.",
+    "aliases":[
+      "mani pedi combo",
+      "manicure pedicure",
+      "nail combo"
+    ],
+    "search_keywords":[
+      "mani pedi",
+      "manicure and pedicure",
+      "hand foot care"
+    ],
+    "suitable_for":[
+      "complete nail grooming"
+    ],
+    "staff_specialization":[
+      "nail technician"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Manicure & Pedicure Combo\nCategory: Packages\nSubcategory: Nail Combo\nGender: Unisex\nDescription: Combined manicure and pedicure session for hand and foot nail grooming.\nAliases: mani pedi combo, manicure pedicure, nail combo\nSearch keywords: mani pedi, manicure and pedicure, hand foot care\nSuitable for: complete nail grooming\nStaff specialization: nail technician\nService level: premium\nDuration: 100 minutes\n"
+  },
+  {
+    "service_id":"S043",
+    "name":"Hair Care Combo",
+    "category":"Packages",
+    "subcategory":"Hair Combo",
+    "gender":"Female",
+    "duration_min":100,
+    "price_inr":1400,
+    "description":"Combined hair wash, conditioning-focused treatment and blow-dry styling.",
+    "aliases":[
+      "hair care package",
+      "hair treatment combo",
+      "hair spa combo"
+    ],
+    "search_keywords":[
+      "hair care",
+      "conditioning",
+      "blow dry",
+      "hair treatment"
+    ],
+    "suitable_for":[
+      "dry-looking hair",
+      "frizzy hair",
+      "event preparation"
+    ],
+    "staff_specialization":[
+      "hair stylist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Hair Care Combo\nCategory: Packages\nSubcategory: Hair Combo\nGender: Female\nDescription: Combined hair wash, conditioning-focused treatment and blow-dry styling.\nAliases: hair care package, hair treatment combo, hair spa combo\nSearch keywords: hair care, conditioning, blow dry, hair treatment\nSuitable for: dry-looking hair, frizzy hair, event preparation\nStaff specialization: hair stylist\nService level: premium\nDuration: 100 minutes\n"
+  },
+  {
+    "service_id":"S044",
+    "name":"Pre-Event Beauty Combo",
+    "category":"Packages",
+    "subcategory":"Beauty Combo",
+    "gender":"Female",
+    "duration_min":150,
+    "price_inr":2600,
+    "description":"A configurable salon package combining facial or cleanup, eyebrow threading and basic hand or foot grooming.",
+    "aliases":[
+      "pre event package",
+      "beauty combo",
+      "event grooming package"
+    ],
+    "search_keywords":[
+      "event preparation",
+      "party preparation",
+      "beauty package",
+      "glow"
+    ],
+    "suitable_for":[
+      "parties",
+      "events",
+      "celebrations"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "nail technician"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Pre-Event Beauty Combo\nCategory: Packages\nSubcategory: Beauty Combo\nGender: Female\nDescription: A configurable salon package combining facial or cleanup, eyebrow threading and basic hand or foot grooming.\nAliases: pre event package, beauty combo, event grooming package\nSearch keywords: event preparation, party preparation, beauty package, glow\nSuitable for: parties, events, celebrations\nStaff specialization: beautician, nail technician\nService level: premium\nDuration: 150 minutes\n"
+  },
+  {
+    "service_id":"S045",
+    "name":"Beard Shave",
+    "category":"Beard",
+    "subcategory":"Shaving",
+    "gender":"Male",
+    "duration_min":20,
+    "price_inr":200,
+    "description":"Traditional beard shaving service with preparation, shaving and finishing care.",
+    "aliases":[
+      "clean shave",
+      "beard shave",
+      "face shave"
+    ],
+    "search_keywords":[
+      "clean shave",
+      "shaving",
+      "beard removal"
+    ],
+    "suitable_for":[
+      "clean-shaven look"
+    ],
+    "staff_specialization":[
+      "barber"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Beard Shave\nCategory: Beard\nSubcategory: Shaving\nGender: Male\nDescription: Traditional beard shaving service with preparation, shaving and finishing care.\nAliases: clean shave, beard shave, face shave\nSearch keywords: clean shave, shaving, beard removal\nSuitable for: clean-shaven look\nStaff specialization: barber\nService level: standard\nDuration: 20 minutes\n"
+  },
+  {
+    "service_id":"S046",
+    "name":"Beard Color",
+    "category":"Beard",
+    "subcategory":"Color",
+    "gender":"Male",
+    "duration_min":45,
+    "price_inr":500,
+    "description":"Beard color application with shade selection, application and finishing.",
+    "aliases":[
+      "beard colouring",
+      "beard dye",
+      "beard color"
+    ],
+    "search_keywords":[
+      "beard color",
+      "grey beard coverage",
+      "beard dye"
+    ],
+    "suitable_for":[
+      "grey beard",
+      "beard color change"
+    ],
+    "staff_specialization":[
+      "barber",
+      "colorist"
+    ],
+    "service_level":"premium",
+    "embedding_text":"Service: Beard Color\nCategory: Beard\nSubcategory: Color\nGender: Male\nDescription: Beard color application with shade selection, application and finishing.\nAliases: beard colouring, beard dye, beard color\nSearch keywords: beard color, grey beard coverage, beard dye\nSuitable for: grey beard, beard color change\nStaff specialization: barber, colorist\nService level: premium\nDuration: 45 minutes\n"
+  },
+  {
+    "service_id":"S047",
+    "name":"Hair Trim",
+    "category":"Hair",
+    "subcategory":"Haircut",
+    "gender":"Unisex",
+    "duration_min":25,
+    "price_inr":300,
+    "description":"A quick trim focused on maintaining the existing hairstyle and removing excess length.",
+    "aliases":[
+      "hair trim",
+      "quick trim",
+      "maintenance haircut"
+    ],
+    "search_keywords":[
+      "trim",
+      "maintenance haircut",
+      "quick haircut"
+    ],
+    "suitable_for":[
+      "regular maintenance",
+      "small length reduction"
+    ],
+    "staff_specialization":[
+      "barber",
+      "hair stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Hair Trim\nCategory: Hair\nSubcategory: Haircut\nGender: Unisex\nDescription: A quick trim focused on maintaining the existing hairstyle and removing excess length.\nAliases: hair trim, quick trim, maintenance haircut\nSearch keywords: trim, maintenance haircut, quick haircut\nSuitable for: regular maintenance, small length reduction\nStaff specialization: barber, hair stylist\nService level: standard\nDuration: 25 minutes\n"
+  },
+  {
+    "service_id":"S048",
+    "name":"Hair Wash",
+    "category":"Hair",
+    "subcategory":"Hair Care",
+    "gender":"Unisex",
+    "duration_min":20,
+    "price_inr":250,
+    "description":"Professional hair cleansing and basic conditioning followed by towel drying.",
+    "aliases":[
+      "hair wash",
+      "shampoo",
+      "hair cleansing"
+    ],
+    "search_keywords":[
+      "hair wash",
+      "shampoo",
+      "hair cleansing"
+    ],
+    "suitable_for":[
+      "fresh hair",
+      "pre-styling preparation"
+    ],
+    "staff_specialization":[
+      "hair stylist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Hair Wash\nCategory: Hair\nSubcategory: Hair Care\nGender: Unisex\nDescription: Professional hair cleansing and basic conditioning followed by towel drying.\nAliases: hair wash, shampoo, hair cleansing\nSearch keywords: hair wash, shampoo, hair cleansing\nSuitable for: fresh hair, pre-styling preparation\nStaff specialization: hair stylist\nService level: standard\nDuration: 20 minutes\n"
+  },
+  {
+    "service_id":"S049",
+    "name":"Face Cleanup",
+    "category":"Skin",
+    "subcategory":"Cleanup",
+    "gender":"Unisex",
+    "duration_min":30,
+    "price_inr":600,
+    "description":"Basic facial cleansing, gentle exfoliation and finishing care for routine salon grooming.",
+    "aliases":[
+      "cleanup",
+      "face cleanup",
+      "basic cleanup"
+    ],
+    "search_keywords":[
+      "cleanup",
+      "face cleansing",
+      "quick facial care"
+    ],
+    "suitable_for":[
+      "routine grooming",
+      "dull-looking skin"
+    ],
+    "staff_specialization":[
+      "beautician"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Face Cleanup\nCategory: Skin\nSubcategory: Cleanup\nGender: Unisex\nDescription: Basic facial cleansing, gentle exfoliation and finishing care for routine salon grooming.\nAliases: cleanup, face cleanup, basic cleanup\nSearch keywords: cleanup, face cleansing, quick facial care\nSuitable for: routine grooming, dull-looking skin\nStaff specialization: beautician\nService level: standard\nDuration: 30 minutes\n"
+  },
+  {
+    "service_id":"S050",
+    "name":"Face Waxing",
+    "category":"Beauty",
+    "subcategory":"Facial Hair Removal",
+    "gender":"Female",
+    "duration_min":25,
+    "price_inr":350,
+    "description":"Facial waxing service for selected facial areas, performed according to the salon's service coverage.",
+    "aliases":[
+      "face wax",
+      "facial waxing",
+      "full face wax"
+    ],
+    "search_keywords":[
+      "face waxing",
+      "facial hair removal",
+      "smooth face"
+    ],
+    "suitable_for":[
+      "facial hair grooming"
+    ],
+    "staff_specialization":[
+      "beautician",
+      "waxing specialist"
+    ],
+    "service_level":"standard",
+    "embedding_text":"Service: Face Waxing\nCategory: Beauty\nSubcategory: Facial Hair Removal\nGender: Female\nDescription: Facial waxing service for selected facial areas, performed according to the salon's service coverage.\nAliases: face wax, facial waxing, full face wax\nSearch keywords: face waxing, facial hair removal, smooth face\nSuitable for: facial hair grooming\nStaff specialization: beautician, waxing specialist\nService level: standard\nDuration: 25 minutes\n"
+  }
+]
