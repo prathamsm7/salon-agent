@@ -1,31 +1,19 @@
 import type { ChatMessage } from "@/components/chat/types";
 import { spokenText } from "@/components/chat/transcript";
 
-type ChatMessageBubbleProps = {
-  message: ChatMessage;
-};
+type ChatMessageBubbleProps = { message: ChatMessage };
 
 export function ChatMessageBubble({ message }: ChatMessageBubbleProps) {
-  const label =
-    message.role === "user" ? "You" : message.role === "choice" ? "Options" : "Tara";
-  const bubbleClass =
-    message.role === "user"
-      ? "bg-[#2c241c] text-[#f7f1ea]"
-      : message.role === "choice"
-        ? "border border-[#e4d8c8] bg-white text-[#2c241c]"
-        : "border border-[#efe4d6] bg-[#fbf7f2] text-[#2c241c]";
+  const label = message.role === "user" ? "You" : message.role === "choice" ? "Service options" : "Tara · Kesh Kala";
+  const isUser = message.role === "user";
 
   return (
-    <div
-      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-    >
-      <div className={`max-w-[90%] rounded-2xl px-4 py-3 ${bubbleClass}`}>
-        <p className="mb-1 text-[11px] font-medium tracking-wide uppercase opacity-70">
-          {label}
-        </p>
-        <p className="whitespace-pre-wrap text-[15px] leading-6">
-          {spokenText(message.content)}
-        </p>
+    <div className={`kk-message-row ${isUser ? "is-user" : "is-assistant"}`}>
+      {!isUser && <span className={`kk-message-avatar ${message.role === "choice" ? "is-choice" : ""}`} aria-hidden="true">{message.role === "choice" ? "✦" : "त"}</span>}
+      <div className={`kk-message-bubble ${isUser ? "kk-user-bubble" : message.role === "choice" ? "kk-choice-bubble" : "kk-assistant-bubble"}`}>
+        <p className="kk-message-label">{label}</p>
+        <p className="kk-message-content">{spokenText(message.content)}</p>
+        {message.pending && message.role === "assistant" && <span className="kk-message-pending"><i /> composing</span>}
       </div>
     </div>
   );

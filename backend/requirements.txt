@@ -7,3 +7,6 @@ certifi==2026.7.22
 httpx==0.28.1
 websockets==16.1.1
 pydantic==2.14.0
+sqlalchemy==2.0.44
+psycopg[binary]==3.2.12
+pyjwt==2.10.1

@@ -13,17 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kesh Kala Reception",
-  description: "Talk or type with Tara, the salon receptionist.",
+  title: "Kesh Kala | Salon, Grooming & Care",
+  description: "Talk to Tara, your personal salon receptionist. Explore services and plan your next appointment with Kesh Kala.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="h-full overflow-hidden">{children}</body>
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} min-h-full antialiased`}>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

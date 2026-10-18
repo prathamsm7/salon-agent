@@ -4,42 +4,35 @@ import { useEffect, useRef } from "react";
 import { ChatMessageBubble } from "@/components/chat/ChatMessageBubble";
 import type { ChatMessage } from "@/components/chat/types";
 
-type MessageListProps = {
-  messages: ChatMessage[];
-};
+const suggestions = ["Explore haircut options", "Find beard styling", "Book an evening slot"];
 
-export function MessageList({ messages }: MessageListProps) {
+type MessageListProps = { messages: ChatMessage[]; emptyHint?: string };
+
+export function MessageList({ messages, emptyHint }: MessageListProps) {
   const transcriptRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = transcriptRef.current;
     if (!node) return;
-    node.scrollTo({
-      top: node.scrollHeight,
-      behavior: "smooth",
-    });
+    node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div
-      ref={transcriptRef}
-      className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6"
-    >
+    <div ref={transcriptRef} data-transcript className="kk-message-list" aria-live="polite" aria-relevant="additions text">
       {messages.length === 0 ? (
-        <div className="flex h-full min-h-48 flex-col items-center justify-center text-center">
-          <p className="text-lg font-medium">Ready when you are</p>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-[#6d6258]">
-            Start a session. We check the microphone first, then leave it open so
-            you can talk with Tara. You can still type.
-          </p>
+        <div className="kk-empty-state">
+          <div className="kk-empty-mark"><span>त</span><i>✦</i></div>
+          <span className="kk-empty-eyebrow">NAMASTE, WELCOME TO KESH KALA</span>
+          <h2>How can I help you <em>feel your best?</em></h2>
+          <p>{emptyHint || "Start a conversation and tell me what you’re looking for. We can explore services, compare options, and plan your visit together."}</p>
+          <div className="kk-suggestion-list" aria-label="Things you can ask Tara">
+            {suggestions.map((suggestion, index) => <span key={suggestion} className="kk-suggestion"><span>0{index + 1}</span>{suggestion}</span>)}
+          </div>
         </div>
       ) : (
-        messages.map((message, index) => (
-          <ChatMessageBubble
-            key={`${message.role}-${index}`}
-            message={message}
-          />
-        ))
+        <div className="kk-message-stack">
+          {messages.map((message, index) => <ChatMessageBubble key={`${message.role}-${index}`} message={message} />)}
+        </div>
       )}
     </div>
   );

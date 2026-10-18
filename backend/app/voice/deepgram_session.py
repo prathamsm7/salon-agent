@@ -37,20 +37,44 @@ from deepgram.types.think_settings_v1provider import ThinkSettingsV1Provider_Goo
 
 from app.voice.salon_backend import (
     SALON_SUPPORT_FUNCTIONS,
+    apply_saved_booking,
     dispatch,
     ensure_services_indexed,
     new_session,
     system_prompt,
 )
+from app.db.store import save_message
 
 Outgoing = tuple[str, Any]
 
 
 class DeepgramSalonSession:
-    def __init__(self, loop: asyncio.AbstractEventLoop, outgoing: asyncio.Queue[Outgoing]) -> None:
+    def __init__(
+        self,
+        loop: asyncio.AbstractEventLoop,
+        outgoing: asyncio.Queue[Outgoing],
+        *,
+        user_id: int,
+        user_name: str,
+        conversation_id: int,
+        recap: str = "",
+        greeting: str | None = None,
+        booking: dict | None = None,
+    ) -> None:
         self.loop = loop
         self.outgoing = outgoing
+        self.conversation_id = conversation_id
+        self.caller_name = user_name
+        self.recap = recap
+        self.greeting = greeting or (
+            "Hi, Welcome to the salon Kesh Kala, this is Tara. "
+            "How can I help you today?"
+        )
         self.salon = new_session()
+        self.salon["user_id"] = user_id
+        self.salon["user_name"] = user_name
+        self.salon["conversation_id"] = conversation_id
+        apply_saved_booking(self.salon, booking)
         self._open = True
         self._settings_applied = threading.Event()
         self._send_lock = threading.Lock()
@@ -145,7 +169,7 @@ class DeepgramSalonSession:
                         type="google", 
                         model="gemini-3.1-flash-lite",
                     ),
-                    prompt=system_prompt(),
+                    prompt=system_prompt(self.caller_name, self.recap),
                     functions=SALON_SUPPORT_FUNCTIONS,
                 ),
                 speak=SpeakSettingsV1(
@@ -153,10 +177,7 @@ class DeepgramSalonSession:
                         type="deepgram", model="aura-2-thalia-en"
                     )
                 ),
-                greeting=(
-                    "Hi, Welcome to the salon Kesh Kala, this is Tara. "
-                    "How can I help you today?"
-                ),
+                greeting=self.greeting,
             ),
         )
 
@@ -177,7 +198,9 @@ class DeepgramSalonSession:
             role = getattr(message, "role", "assistant")
             content = getattr(message, "content", "") or ""
             if content:
-                self._emit("json", {"type": "transcript", "role": role, "content": content})
+                stored_role = "user" if role == "user" else "assistant"
+                save_message(self.conversation_id, stored_role, content)
+                self._emit("json", {"type": "transcript", "role": stored_role, "content": content})
         elif msg_type == "AgentStartedSpeaking":
             self._emit("json", {"type": "speaking", "value": True})
         elif msg_type == "AgentAudioDone":
@@ -195,6 +218,7 @@ class DeepgramSalonSession:
         self._pending_choice_list = None
         if choice_list:
             self._emit("json", {"type": "choice_list", "content": choice_list})
+            save_message(self.conversation_id, "choice", choice_list)
 
     def _handle_function_call(self, fn: Any) -> None:
         if not self.agent:

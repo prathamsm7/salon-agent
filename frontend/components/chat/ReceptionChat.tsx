@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import { MessageList } from "@/components/chat/MessageList";
 import { ReceptionHeader } from "@/components/chat/ReceptionHeader";
@@ -9,7 +9,9 @@ import {
   appendTranscript,
   insertChoiceList,
   microphoneError,
+  statusLabel,
 } from "@/components/chat/transcript";
+import { fetchMessages, type StoredMessage } from "@/lib/api";
 import {
   connectVoice,
   openMicrophone,
@@ -18,15 +20,60 @@ import {
 
 type VoiceSession = ReturnType<typeof connectVoice>;
 
-export function ReceptionChat() {
+type ReceptionChatProps = {
+  token: string;
+  mode: "new" | "active" | "past";
+  conversationId: number | null;
+  onBookingsChanged: () => void;
+  sidebar?: ReactNode;
+};
+
+function ConnectionStatus({ status, micOn }: { status: SessionStatus; micOn: boolean }) {
+  const label = statusLabel(status, micOn);
+  const state = status === "live"
+    ? (micOn ? "listening" : "connected")
+    : status === "speaking"
+      ? "speaking"
+      : status === "connecting" || status === "checking-mic"
+        ? "connecting"
+        : "idle";
+  const title = state === "listening" ? "Line is open"
+    : state === "connected" ? "Connected"
+      : state === "speaking" ? "Tara is speaking"
+        : state === "connecting" ? "Getting things ready"
+          : "Session not started";
+
+  return (
+    <div className="kk-header-status kk-card-status" aria-live="polite">
+      <span className={`kk-status-dot kk-status-${state}`} />
+      <span className="kk-status-copy"><strong>{title}</strong><small>{label}</small></span>
+    </div>
+  );
+}
+
+function storedMessages(rows: StoredMessage[]): ChatMessage[] {
+  return rows
+    .filter((row) => row.role === "user" || row.role === "assistant" || row.role === "choice")
+    .map((row) => ({ role: row.role, content: row.content, pending: false }));
+}
+
+export function ReceptionChat({
+  token,
+  mode,
+  conversationId,
+  onBookingsChanged,
+  sidebar,
+}: ReceptionChatProps) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [status, setStatus] = useState<SessionStatus>("idle");
   const [micOn, setMicOn] = useState(false);
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(mode === "new");
   const voiceRef = useRef<VoiceSession | null>(null);
   const micRef = useRef<LiveMic | null>(null);
   const sessionId = useRef(0);
+  const liveConversation = useRef<number | null>(conversationId);
 
   useEffect(() => {
     return () => {
@@ -36,14 +83,37 @@ export function ReceptionChat() {
     };
   }, []);
 
+  useEffect(() => {
+    if (mode === "new" || conversationId == null) {
+      setReady(true);
+      return;
+    }
+    let cancelled = false;
+    setReady(false);
+    setError("");
+    fetchMessages(token, conversationId)
+      .then((result) => {
+        if (cancelled) return;
+        setMessages(storedMessages(result.messages));
+        setReady(true);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setError("That chat could not be loaded.");
+        setReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [conversationId, mode, token]);
+
   async function handleStart() {
-    if (voiceRef.current || status === "connecting" || status === "checking-mic") {
+    if (!ready || voiceRef.current || status === "connecting" || status === "checking-mic") {
       return;
     }
     const id = sessionId.current + 1;
     sessionId.current = id;
     setError("");
-    setMessages([]);
     setMicOn(false);
     setStatus("checking-mic");
 
@@ -75,11 +145,14 @@ export function ReceptionChat() {
               previous.map((message) =>
                 message.pending && message.role === "assistant"
                   ? { ...message, pending: false }
-                  : message
-              )
+                  : message,
+              ),
             );
           }
-          if (next === "idle") voiceRef.current = null;
+          if (next === "idle") {
+            voiceRef.current = null;
+            onBookingsChanged();
+          }
         },
         onTranscript: (role, content) => {
           if (sessionId.current !== id) return;
@@ -97,8 +170,13 @@ export function ReceptionChat() {
           if (sessionId.current !== id) return;
           setMicOn(enabled);
         },
+        onConversation: (nextId) => {
+          liveConversation.current = nextId;
+        },
       },
-      mic
+      mic,
+      token,
+      liveConversation.current,
     );
   }
 
@@ -110,6 +188,7 @@ export function ReceptionChat() {
     micRef.current = null;
     setMicOn(false);
     setStatus("idle");
+    onBookingsChanged();
   }
 
   async function handleSend() {
@@ -125,26 +204,62 @@ export function ReceptionChat() {
     }
   }
 
+  const readOnly = mode === "past" || (mode !== "new" && conversationId == null);
+  const emptyHint = readOnly
+    ? "This appointment is finished. The saved chat is shown here."
+    : mode === "active"
+      ? "This upcoming appointment keeps its chat. Start the session to talk with Tara about it."
+      : undefined;
+
+  const startLabel = ready
+    ? mode === "active"
+      ? "Continue with Tara"
+      : "Start talking with Tara"
+    : "Loading the chat…";
+
   return (
-    <div className="mx-auto flex h-full w-full max-w-3xl flex-col gap-4 px-4 py-4 sm:px-6 sm:py-5">
-      <ReceptionHeader status={status} micOn={micOn} />
-      <section className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-[#e7dccf] bg-white/80 shadow-[0_20px_50px_-30px_rgba(70,46,20,0.45)]">
-        <MessageList messages={messages} />
-        <ChatComposer
-          status={status}
-          micOn={micOn}
-          input={input}
-          error={error}
-          onInputChange={setInput}
-          onStart={() => {
-            void handleStart();
-          }}
-          onEnd={handleEnd}
-          onSend={() => {
-            void handleSend();
-          }}
-        />
-      </section>
+    <div className="kk-chat-page kk-chat-shell">
+      <ReceptionHeader />
+      <div className="kk-chat-workspace">
+        {sidebar}
+        <main className="kk-chat-main">
+          <div className="kk-chat-heading">
+            <h1>Tell us what you have <em>in mind.</em></h1>
+            <p>Talk naturally with Tara, or type a message below. We’ll help with services and appointments.</p>
+          </div>
+          <section className="kk-chat-card" aria-label="Conversation with Tara">
+            <div className="kk-chat-card-head">
+              <div className="kk-tara-avatar">त<span className="kk-avatar-sparkle">✦</span></div>
+              <div className="kk-card-head-copy"><strong>Tara</strong><span>Virtual salon receptionist</span></div>
+              <ConnectionStatus status={status} micOn={micOn} />
+            </div>
+            <MessageList messages={messages} emptyHint={emptyHint} />
+            {readOnly ? (
+              <p className="kk-past-note">
+                {error || "Past appointments stay here to read. Start a new chat to book again."}
+              </p>
+            ) : (
+              <ChatComposer
+                status={status}
+                micOn={micOn}
+                input={input}
+                error={error}
+                startLabel={startLabel}
+                canStart={ready}
+                onInputChange={setInput}
+                onStart={() => {
+                  void handleStart();
+                }}
+                onEnd={handleEnd}
+                onSend={() => {
+                  void handleSend();
+                }}
+              />
+            )}
+          </section>
+          <p className="kk-chat-footnote"><span aria-hidden="true">✳</span> You’re in control. Nothing is booked until you confirm the details.</p>
+        </main>
+      </div>
     </div>
   );
 }

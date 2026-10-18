@@ -6,6 +6,7 @@ export type VoiceHandlers = {
   onChoiceList?: (content: string) => void;
   onError: (message: string) => void;
   onMic: (enabled: boolean) => void;
+  onConversation?: (id: number) => void;
 };
 
 const TARGET_RATE = 24000;
@@ -39,10 +40,12 @@ class PcmProcessor extends AudioWorkletProcessor {
 registerProcessor("pcm-processor", PcmProcessor);
 `;
 
-function voiceSocketUrl(): string {
+function voiceSocketUrl(token: string, conversationId?: number | null): string {
   const httpUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
   const wsUrl = httpUrl.replace(/^http/, "ws");
-  return `${wsUrl}/api/voice`;
+  const params = new URLSearchParams({ token });
+  if (conversationId) params.set("conversation_id", String(conversationId));
+  return `${wsUrl}/api/voice?${params}`;
 }
 
 function downsampleToPcm16(input: Float32Array, inputRate: number): ArrayBuffer {
@@ -140,8 +143,13 @@ export async function openMicrophone(): Promise<LiveMic> {
   };
 }
 
-export function connectVoice(handlers: VoiceHandlers, mic: LiveMic) {
-  const socket = new WebSocket(voiceSocketUrl());
+export function connectVoice(
+  handlers: VoiceHandlers,
+  mic: LiveMic,
+  token: string,
+  conversationId?: number | null,
+) {
+  const socket = new WebSocket(voiceSocketUrl(token, conversationId));
   socket.binaryType = "arraybuffer";
 
   let playback = new AudioContext();
@@ -240,7 +248,13 @@ export function connectVoice(handlers: VoiceHandlers, mic: LiveMic) {
       content?: string;
       value?: boolean;
       message?: string;
+      id?: number;
     };
+
+    if (message.type === "conversation" && typeof message.id === "number") {
+      handlers.onConversation?.(message.id);
+      return;
+    }
 
     if (message.type === "status" && message.state === "closed") {
       handlers.onError("The voice line closed.");
