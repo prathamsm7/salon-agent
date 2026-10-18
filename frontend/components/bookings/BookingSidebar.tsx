@@ -11,7 +11,7 @@ type BookingSidebarProps = {
   bookings: { active: BookingSummary[]; past: BookingSummary[] };
   selection: ChatSelection;
   name: string;
-  phone: string;
+  email: string;
   onLogout: () => void;
   onSelect: (selection: ChatSelection) => void;
 };
@@ -20,7 +20,7 @@ export function BookingSidebar({
   bookings,
   selection,
   name,
-  phone,
+  email,
   onLogout,
   onSelect,
 }: BookingSidebarProps) {
@@ -58,7 +58,7 @@ export function BookingSidebar({
           <span className="kk-profile-avatar">{initial}</span>
           <span className="kk-profile-copy">
             <strong>{name}</strong>
-            <small>{phone}</small>
+            <small>{email}</small>
           </span>
           <button type="button" className="kk-logout-link" onClick={onLogout} aria-label="Log out" title="Log out">
             ↗

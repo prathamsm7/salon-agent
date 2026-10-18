@@ -31,7 +31,11 @@ from deepgram.agent.v1.types import (
 )
 from deepgram.core.events import EventType
 from deepgram.types.speak_settings_v1 import SpeakSettingsV1
-from deepgram.types.speak_settings_v1provider import SpeakSettingsV1Provider_Deepgram
+from deepgram.types.speak_settings_v1endpoint import SpeakSettingsV1Endpoint
+from deepgram.types.speak_settings_v1provider import (
+    SpeakSettingsV1Provider_Deepgram,
+    SpeakSettingsV1Provider_ElevenLabs,
+)
 from deepgram.types.think_settings_v1 import ThinkSettingsV1
 from deepgram.types.think_settings_v1provider import ThinkSettingsV1Provider_Google
 
@@ -46,6 +50,49 @@ from app.voice.salon_backend import (
 from app.db.store import save_message
 
 Outgoing = tuple[str, Any]
+
+
+def use_elevenlabs() -> bool:
+    """USE_ELEVENLABS=true speaks with ElevenLabs. Anything else uses Deepgram."""
+    return os.environ.get("USE_ELEVENLABS", "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _elevenlabs_voice() -> tuple[str, str] | None:
+    """Return the ElevenLabs key and voice id when the flag is on.
+
+    The voice must be a premade voice on a free key. Library voices are rejected.
+    """
+    if not use_elevenlabs():
+        return None
+    api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    voice_id = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
+    if not api_key or not voice_id:
+        raise RuntimeError("USE_ELEVENLABS is on, but ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID are required.")
+    return api_key, voice_id
+
+
+def _speak_settings() -> SpeakSettingsV1:
+    """Speak with ElevenLabs only when USE_ELEVENLABS is on. Otherwise use Meena."""
+    elevenlabs = _elevenlabs_voice()
+    if elevenlabs is None:
+        return SpeakSettingsV1(
+            provider=SpeakSettingsV1Provider_Deepgram(
+                type="deepgram",
+                version="v2",
+                model="flux-meena-en",
+            )
+        )
+    api_key, voice_id = elevenlabs
+    return SpeakSettingsV1(
+        provider=SpeakSettingsV1Provider_ElevenLabs(
+            type="eleven_labs",
+            model_id="eleven_turbo_v2_5",
+        ),
+        endpoint=SpeakSettingsV1Endpoint(
+            url=f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/multi-stream-input",
+            headers={"xi-api-key": api_key},
+        ),
+    )
 
 
 class DeepgramSalonSession:
@@ -77,6 +124,7 @@ class DeepgramSalonSession:
         apply_saved_booking(self.salon, booking)
         self._open = True
         self._settings_applied = threading.Event()
+        self._startup_error: str | None = None
         self._send_lock = threading.Lock()
         self._pending_choice_list: str | None = None
         self._agent_cm = None
@@ -102,6 +150,8 @@ class DeepgramSalonSession:
 
             if not self._settings_applied.wait(timeout=15):
                 raise TimeoutError("Timed out waiting for Deepgram settings")
+            if self._startup_error:
+                raise RuntimeError(self._startup_error)
         except Exception:
             self.close()
             raise
@@ -141,16 +191,19 @@ class DeepgramSalonSession:
                 ),
             ),
             agent=AgentV1SettingsAgent(
-                language="en",
                 listen=AgentV1SettingsAgentListen(
                     provider=AgentV1SettingsAgentListenProvider_V1(
                         type="deepgram",
                         model="nova-3",
-                        language="en",
+                        language="multi",
                         smart_format=True,
-                        # Wait through a natural pause before deciding the guest has finished.
-                        endpointing=2000,
+                        # Silence before the guest is treated as finished. Extra listen fields are rejected.
+                        endpointing=500,
                         keyterms=[
+                            "hair",
+                            "frizzy",
+                            "treatment",
+                            "smoothening",
                             "haircut",
                             "beard",
                             "facial",
@@ -169,14 +222,14 @@ class DeepgramSalonSession:
                         type="google", 
                         model="gemini-3.1-flash-lite",
                     ),
-                    prompt=system_prompt(self.caller_name, self.recap),
+                    prompt=system_prompt(
+                        self.caller_name,
+                        self.recap,
+                        bilingual=_elevenlabs_voice() is not None,
+                    ),
                     functions=SALON_SUPPORT_FUNCTIONS,
                 ),
-                speak=SpeakSettingsV1(
-                    provider=SpeakSettingsV1Provider_Deepgram(
-                        type="deepgram", model="aura-2-thalia-en"
-                    )
-                ),
+                speak=_speak_settings(),
                 greeting=self.greeting,
             ),
         )
@@ -209,6 +262,9 @@ class DeepgramSalonSession:
             self._flush_choice_list()
         elif msg_type == "Error":
             description = getattr(message, "description", None) or str(message)
+            if not self._settings_applied.is_set():
+                self._startup_error = str(description)
+                self._settings_applied.set()
             self._emit("json", {"type": "error", "message": str(description)})
             self._emit("json", {"type": "speaking", "value": False})
             self._flush_choice_list()

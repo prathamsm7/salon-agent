@@ -4,7 +4,7 @@ const TOKEN_KEY = "keshkala.token";
 export type Account = {
   id: number;
   name: string;
-  phone: string;
+  email: string;
 };
 
 export type BookingSummary = {
@@ -62,17 +62,17 @@ async function request<T>(path: string, options: RequestInit = {}, token?: strin
   return data as T;
 }
 
-export function requestOtp(phone: string, name?: string) {
+export function requestOtp(email: string, name?: string) {
   return request<{ sent: boolean }>("/api/auth/otp/request", {
     method: "POST",
-    body: JSON.stringify({ phone, name: name || null }),
+    body: JSON.stringify({ email, name: name || null }),
   });
 }
 
-export function verifyOtp(phone: string, code: string) {
+export function verifyOtp(email: string, code: string) {
   return request<{ token: string; user: Account }>("/api/auth/otp/verify", {
     method: "POST",
-    body: JSON.stringify({ phone, code }),
+    body: JSON.stringify({ email, code }),
   });
 }
 

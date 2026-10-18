@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { requestOtp, verifyOtp, type Account, type ApiError } from "@/lib/api";
 
-type PhoneLoginProps = {
+type EmailLoginProps = {
   onSignedIn: (token: string, user: Account) => void;
 };
 
-type Step = "phone" | "name" | "code";
+type Step = "email" | "name" | "code";
 
-export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
-  const [step, setStep] = useState<Step>("phone");
-  const [phone, setPhone] = useState("");
+export function EmailLogin({ onSignedIn }: EmailLoginProps) {
+  const [step, setStep] = useState<Step>("email");
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
     setPending(true);
     setError("");
     try {
-      await requestOtp(phone, nextName);
+      await requestOtp(email, nextName);
       setStep("code");
     } catch (caught) {
       const apiError = caught as ApiError;
@@ -40,7 +40,7 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
     setPending(true);
     setError("");
     try {
-      const result = await verifyOtp(phone, code);
+      const result = await verifyOtp(email, code);
       onSignedIn(result.token, result.user);
     } catch (caught) {
       const apiError = caught as ApiError;
@@ -56,7 +56,7 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
         className="kk-sign-card"
         onSubmit={(event) => {
           event.preventDefault();
-          if (step === "phone") void sendCode();
+          if (step === "email") void sendCode();
           else if (step === "name") void sendCode(name);
           else void submitCode();
         }}
@@ -65,8 +65,8 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
         <h1>Sign in</h1>
         <p>
           {step === "code"
-            ? "Enter the code from the API log. It stays valid for five minutes."
-            : "Use your phone number. A new number asks for your name, then a one-time code."}
+            ? "Enter the code from your email. It stays valid for five minutes."
+            : "Use your email. A new address asks for your name, then a one-time code."}
         </p>
 
         {error && (
@@ -76,15 +76,15 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
           </p>
         )}
 
-        {step === "phone" && (
+        {step === "email" && (
           <label>
-            Phone number
+            Email
             <input
-              inputMode="tel"
-              autoComplete="tel"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              placeholder="98765 43210"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="priya@email.com"
               required
             />
           </label>
@@ -105,7 +105,7 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
 
         {step === "code" && (
           <label>
-            Code for {phone}
+            Code for {email}
             <input
               inputMode="numeric"
               autoComplete="one-time-code"
@@ -121,17 +121,17 @@ export function PhoneLogin({ onSignedIn }: PhoneLoginProps) {
           {pending ? "Please wait…" : step === "code" ? "Sign in" : "Continue"}
         </button>
 
-        {step !== "phone" && (
+        {step !== "email" && (
           <button
             type="button"
             className="kk-text-button"
             onClick={() => {
-              setStep("phone");
+              setStep("email");
               setCode("");
               setError("");
             }}
           >
-            Use a different number
+            Use a different email
           </button>
         )}
       </form>

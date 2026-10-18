@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { PhoneLogin } from "@/components/auth/PhoneLogin";
+import { EmailLogin } from "@/components/auth/EmailLogin";
 import { BookingSidebar, type ChatSelection } from "@/components/bookings/BookingSidebar";
 import { ReceptionChat } from "@/components/chat/ReceptionChat";
 import {
@@ -51,14 +51,6 @@ export function ReceptionApp() {
   }, [refreshBookings]);
 
   useEffect(() => {
-    if (!token) return;
-    const timer = window.setInterval(() => {
-      void refreshBookings(token);
-    }, 8000);
-    return () => window.clearInterval(timer);
-  }, [refreshBookings, token]);
-
-  useEffect(() => {
     if (selection.kind !== "active") return;
     const conversationId = selection.booking.conversation_id;
     const stillActive = bookings.active.some(
@@ -92,7 +84,7 @@ export function ReceptionApp() {
 
   if (!token || !user) {
     return (
-      <PhoneLogin
+      <EmailLogin
         onSignedIn={(nextToken, account) => {
           saveToken(nextToken);
           setToken(nextToken);
@@ -123,7 +115,7 @@ export function ReceptionApp() {
           bookings={bookings}
           selection={selection}
           name={user.name}
-          phone={user.phone}
+          email={user.email}
           onLogout={handleLogout}
           onSelect={handleSelect}
         />

@@ -49,6 +49,22 @@ def init_db() -> None:
                     ) THEN
                         ALTER TABLE bookings ALTER COLUMN code TYPE VARCHAR(80);
                     END IF;
+                    IF EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = 'users' AND column_name = 'phone'
+                    ) THEN
+                        ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(254);
+                        ALTER TABLE users ALTER COLUMN phone DROP NOT NULL;
+                        CREATE UNIQUE INDEX IF NOT EXISTS uq_users_email ON users (email);
+                    END IF;
+                    IF EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = 'otp_codes' AND column_name = 'phone'
+                    ) THEN
+                        ALTER TABLE otp_codes ADD COLUMN IF NOT EXISTS email VARCHAR(254);
+                        ALTER TABLE otp_codes ALTER COLUMN phone DROP NOT NULL;
+                        CREATE UNIQUE INDEX IF NOT EXISTS uq_otp_codes_email ON otp_codes (email);
+                    END IF;
                 END $$;
                 """
             )

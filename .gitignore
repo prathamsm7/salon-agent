@@ -15,6 +15,7 @@ backend/.venv/
 .mypy_cache/
 .ruff_cache/
 backend/chroma_db/
+backend/data/.catalog_index_hash
 
 # Node / Next.js
 frontend/node_modules/

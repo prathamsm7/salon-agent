@@ -13,7 +13,9 @@ def format_options(services) -> str:
             f"{i}. {opt.get('name')}: {opt.get('price_inr')} rupees, "
             f"{opt.get('duration_min')} minutes"
         )
-        if opt.get("description"):
+        if opt.get("summary"):
+            line += f". {opt['summary']}"
+        elif opt.get("description"):
             line += f". {opt['description']}"
         line += f"\n   internal_service_id: {opt.get('service_id')}"
         lines.append(line)

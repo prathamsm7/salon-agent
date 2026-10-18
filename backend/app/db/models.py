@@ -26,7 +26,8 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(80))
-    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    email: Mapped[str | None] = mapped_column(String(254), unique=True, index=True)
+    phone: Mapped[str | None] = mapped_column(String(20), unique=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -36,7 +37,8 @@ class OtpCode(Base):
     __tablename__ = "otp_codes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    email: Mapped[str | None] = mapped_column(String(254), unique=True, index=True)
+    phone: Mapped[str | None] = mapped_column(String(20), unique=True, index=True)
     code_hash: Mapped[str] = mapped_column(String(128))
     pending_name: Mapped[str | None] = mapped_column(String(80))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

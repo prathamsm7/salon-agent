@@ -158,6 +158,7 @@ export function connectVoice(
   let agentSpeaking = false;
   let closing = false;
   let becameLive = false;
+  let reportedError = false;
   handlers.onMic(true);
   mic.setSender((pcm) => {
     if (closing || agentSpeaking || socket.readyState !== WebSocket.OPEN) return;
@@ -284,6 +285,7 @@ export function connectVoice(
       return;
     }
     if (message.type === "error" && message.message) {
+      reportedError = true;
       handlers.onError(message.message);
     }
   };
@@ -303,7 +305,7 @@ export function connectVoice(
       return;
     }
     handlers.onStatus("idle");
-    if (!becameLive) {
+    if (!becameLive && !reportedError) {
       handlers.onError("The voice session closed before Tara was ready.");
     }
   };
