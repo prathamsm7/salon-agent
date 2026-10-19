@@ -18,6 +18,7 @@ os.environ.setdefault("SSL_CERT_FILE", certifi.where())
 from deepgram.client import DeepgramClient
 from deepgram.agent.v1.types import (
     AgentV1FunctionCallRequest,
+    AgentV1InjectAgentMessage,
     AgentV1InjectUserMessage,
     AgentV1KeepAlive,
     AgentV1SendFunctionCallResponse,
@@ -48,8 +49,11 @@ from app.voice.salon_backend import (
     system_prompt,
 )
 from app.db.store import save_message
+from app.voice.action_log import log_action
 
 Outgoing = tuple[str, Any]
+IDLE_SECONDS = 45
+GOODBYE_LINE = "I'll let you go for now. Call again whenever you'd like."
 
 
 def use_elevenlabs() -> bool:
@@ -129,6 +133,14 @@ class DeepgramSalonSession:
         self._pending_choice_list: str | None = None
         self._agent_cm = None
         self.agent = None
+        now = time.monotonic()
+        self._last_user_speech = now
+        self._quiet_since: float | None = None
+        self._agent_speaking = False
+        self._end_after_audio = False
+        self._end_reason: str | None = None
+        self._end_deadline: float | None = None
+        self._finished = False
 
     def start(self) -> None:
         ensure_services_indexed()
@@ -139,10 +151,7 @@ class DeepgramSalonSession:
 
             self.agent.on(EventType.MESSAGE, self._on_message)
             self.agent.on(EventType.ERROR, self._on_error)
-            self.agent.on(
-                EventType.CLOSE,
-                lambda _: self._emit("json", {"type": "status", "state": "closed"}),
-            )
+            self.agent.on(EventType.CLOSE, lambda _: self._on_deepgram_close())
 
             self.agent.send_settings(self._settings())
             threading.Thread(target=self.agent.start_listening, daemon=True).start()
@@ -159,6 +168,7 @@ class DeepgramSalonSession:
     def send_text(self, content: str) -> None:
         if not self.agent or not content.strip():
             return
+        self._note_user_speech()
         with self._send_lock:
             self.agent.send_inject_user_message(AgentV1InjectUserMessage(content=content))
 
@@ -252,14 +262,25 @@ class DeepgramSalonSession:
             content = getattr(message, "content", "") or ""
             if content:
                 stored_role = "user" if role == "user" else "assistant"
+                if stored_role == "user":
+                    self._note_user_speech()
                 save_message(self.conversation_id, stored_role, content)
                 self._emit("json", {"type": "transcript", "role": stored_role, "content": content})
+        elif msg_type == "UserStartedSpeaking":
+            self._note_user_speech()
         elif msg_type == "AgentStartedSpeaking":
+            self._agent_speaking = True
             self._emit("json", {"type": "speaking", "value": True})
         elif msg_type == "AgentAudioDone":
+            self._agent_speaking = False
+            self._quiet_since = time.monotonic()
             self._emit("json", {"type": "speaking", "value": False})
             # After Tara finishes speaking so the chat order is reply, then options.
             self._flush_choice_list()
+            if self._end_after_audio:
+                self._finish_call()
+        elif msg_type == "InjectionRefused" and self._end_reason == "idle":
+            self._finish_call()
         elif msg_type == "Error":
             description = getattr(message, "description", None) or str(message)
             if not self._settings_applied.is_set():
@@ -282,6 +303,10 @@ class DeepgramSalonSession:
         raw_args = fn.arguments
         params = json.loads(raw_args) if isinstance(raw_args, str) else (raw_args or {})
         content = dispatch(self.salon, fn.name, params)
+        if self.salon.get("end_reason") == "goodbye":
+            self._end_after_audio = True
+            self._end_reason = "goodbye"
+            self._end_deadline = time.monotonic() + 20
         choice_list = self.salon.pop("choice_list", None)
         if choice_list:
             # Show after Tara's spoken reply so the chat order is reply, then options.
@@ -306,12 +331,56 @@ class DeepgramSalonSession:
             time.sleep(5)
             if not self._open or not self.agent or not self._settings_applied.is_set():
                 continue
+            if (
+                self._end_after_audio
+                and self._end_deadline is not None
+                and time.monotonic() > self._end_deadline
+            ):
+                self._finish_call()
+                continue
+            self._close_if_idle()
             try:
                 with self._send_lock:
                     if self.agent:
                         self.agent.send_keep_alive(AgentV1KeepAlive())
             except Exception:
                 break
+
+    def _note_user_speech(self) -> None:
+        self._last_user_speech = time.monotonic()
+
+    def _close_if_idle(self) -> None:
+        """After Tara is quiet and the guest says nothing, say goodbye and close."""
+        if self._end_after_audio or self._agent_speaking or self._quiet_since is None:
+            return
+        now = time.monotonic()
+        if now - self._quiet_since < IDLE_SECONDS or now - self._last_user_speech < IDLE_SECONDS:
+            return
+        self._end_after_audio = True
+        self._end_reason = "idle"
+        self._end_deadline = time.monotonic() + 20
+        log_action(self.salon, "end_session", {"reason": "idle"}, "Closing after no reply.")
+        try:
+            with self._send_lock:
+                if self.agent:
+                    self.agent.send_inject_agent_message(
+                        AgentV1InjectAgentMessage(message=GOODBYE_LINE, behavior="queue")
+                    )
+        except Exception:
+            self._finish_call()
+
+    def _finish_call(self) -> None:
+        with self._send_lock:
+            if self._finished:
+                return
+            self._finished = True
+        self._emit("json", {"type": "status", "state": "ended", "reason": self._end_reason or "goodbye"})
+        self.close()
+
+    def _on_deepgram_close(self) -> None:
+        if self._end_reason:
+            return
+        self._emit("json", {"type": "status", "state": "closed"})
 
     def _emit(self, kind: str, payload: Any) -> None:
         try:

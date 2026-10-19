@@ -83,8 +83,8 @@ def prepare_voice(user_id: int, user_name: str, conversation_id: int | None) -> 
     if booking:
         service_names = ", ".join(item["name"] for item in booking["services"]) or "the saved services"
         recap_lines.append(
-            "Open appointment "
-            f"internal_booking_id: {booking['booking_id']}. "
+            "Open appointment. Do not read its booking code aloud. "
+            "If they ask to see the booking code, call read_booking with show_code true. "
             f"Staff {booking['staff_name']} at {booking['time']} on {booking['date']}. "
             f"Services: {service_names}."
         )

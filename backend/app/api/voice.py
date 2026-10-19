@@ -99,5 +99,8 @@ async def _pump(websocket: WebSocket, outgoing: asyncio.Queue) -> None:
             return
         if kind == "json":
             await websocket.send_json(payload)
+            if isinstance(payload, dict) and payload.get("state") == "ended":
+                await websocket.close()
+                return
         elif kind == "audio" and payload:
             await websocket.send_bytes(payload)

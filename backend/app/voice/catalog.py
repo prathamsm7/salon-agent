@@ -329,9 +329,9 @@ SERVICE_FUNCTIONS = [
     {
         "name": "add_services",
         "description": (
-            "Add shown service ids to the cart. Call only after asked to add a service. "
-            "Add a service only after the list is shown to the customer. "
-            "Copy service ids from the latest find_services result."
+            "Add one chosen service to the cart. Call only after the customer picks a shown option "
+            "or asks to add that service. Do not call this for a recommendation, an explanation, "
+            "a browse, or a question. Copy only the chosen ids from the latest shown list."
         ),
         "parameters": {
             "type": "object",
@@ -344,8 +344,8 @@ SERVICE_FUNCTIONS = [
     {
         "name": "remove_services",
         "description": (
-            "Remove service ids from the cart. Call the function only after asked to remove a service. "
-            "Remove a service only if the cart is not empty."
+            "Remove a service from the cart only after the customer asks to take it out. "
+            "Do not call this to clear the cart, to replace a service, or before adding."
         ),
         "parameters": {
             "type": "object",

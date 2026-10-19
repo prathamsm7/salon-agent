@@ -257,6 +257,13 @@ export function connectVoice(
       return;
     }
 
+    if (message.type === "status" && message.state === "ended") {
+      becameLive = true;
+      releaseMic();
+      const delay = Math.max(0, (nextPlayTime - playback.currentTime) * 1000);
+      window.setTimeout(() => endSession(), delay + 250);
+      return;
+    }
     if (message.type === "status" && message.state === "closed") {
       handlers.onError("The voice line closed.");
       endSession();
