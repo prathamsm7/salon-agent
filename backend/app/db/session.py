@@ -10,7 +10,18 @@ from sqlalchemy.orm import sessionmaker
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BACKEND_DIR / ".env")
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
+def _sqlalchemy_url(url: str) -> str:
+    """Accept the postgres URLs hosts provide and use the psycopg driver."""
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://") :]
+    if url.startswith("postgresql+"):
+        return url
+    if url.startswith("postgresql://"):
+        return "postgresql+psycopg://" + url[len("postgresql://") :]
+    return url
+
+
+DATABASE_URL = _sqlalchemy_url(os.environ.get("DATABASE_URL", ""))
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is required")
 
