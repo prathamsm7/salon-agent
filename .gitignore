@@ -20,6 +20,7 @@ backend/data/.catalog_index_hash
 # Node / Next.js
 frontend/node_modules/
 frontend/.next/
+frontend/.vercel/
 frontend/out/
 frontend/*.tsbuildinfo
 frontend/next-env.d.ts
