@@ -244,7 +244,7 @@ export function connectVoice(
 
     const message = JSON.parse(event.data) as {
       type?: string;
-      state?: VoiceStatus | "closed";
+      state?: VoiceStatus | "closed" | "ended";
       role?: "user" | "assistant";
       content?: string;
       value?: boolean;
