@@ -1,4 +1,4 @@
-"""Create, list, cancel, and move appointments. Each confirmed booking holds one slot."""
+"""Create, list, cancel, and move appointments. Each confirmed booking holds one calendar event."""
 
 from __future__ import annotations
 
@@ -58,6 +58,78 @@ def is_active(payload: dict) -> bool:
     return bool(payload.get("active"))
 
 
+def _visit_title(services: list[dict]) -> str:
+    names = [
+        str(item.get("name") or "").strip()
+        for item in services
+        if str(item.get("name") or "").strip()
+    ]
+    return ", ".join(names)[:180] or "Salon appointment"
+
+
+def _visit_minutes(services: list[dict]) -> int:
+    total = sum(int(item.get("duration_min") or 0) for item in services)
+    return total if total > 0 else 60
+
+
+def _ensure_opening(db, slot_id: str) -> Slot | None:
+    """Find or create the slot row for a shown calendar time. Does not lock it."""
+    from app.calendar.schedule import parse_opening
+
+    parsed = parse_opening(slot_id)
+    if parsed is None:
+        return db.get(Slot, slot_id)
+    staff_id, date_value, spoken = parsed
+    existing = db.scalar(
+        select(Slot).where(
+            Slot.staff_id == staff_id,
+            Slot.date == date_value,
+            Slot.time == spoken,
+        )
+    )
+    if existing is not None:
+        return existing
+    existing = Slot(
+        slot_id=slot_id,
+        date=date_value,
+        time=spoken,
+        staff_id=staff_id,
+        status="available",
+    )
+    try:
+        with db.begin_nested():
+            db.add(existing)
+            db.flush()
+    except IntegrityError:
+        existing = db.scalar(
+            select(Slot).where(
+                Slot.staff_id == staff_id,
+                Slot.date == date_value,
+                Slot.time == spoken,
+            )
+        )
+    return existing
+
+
+def _slot_for_opening(db, slot_id: str) -> Slot | None:
+    """Lock the slot row for a shown calendar time, creating it when this is the first booking."""
+    existing = _ensure_opening(db, slot_id)
+    if existing is None:
+        return None
+    return lock_slot(db, existing.slot_id)
+
+
+def _drop_event(created: dict | None) -> None:
+    if not created:
+        return
+    from app.calendar.events import delete_calendar_event
+
+    try:
+        delete_calendar_event(created["calendar_id"], created["event_id"])
+    except Exception:
+        return
+
+
 def confirm_booking(
     user_id: int,
     conversation_id: int,
@@ -79,7 +151,7 @@ def confirm_booking(
             raise VoiceDenied(
                 "This chat already has an appointment. Reschedule or cancel that one."
             )
-        slot = lock_slot(db, slot_id)
+        slot = _slot_for_opening(db, slot_id)
         if slot is None or slot.status != "available" or slot_is_past(slot.date, slot.time):
             db.rollback()
             return None
@@ -105,11 +177,33 @@ def confirm_booking(
                 )
             )
         conversation.updated_at = datetime.now(timezone.utc)
+        from app.calendar.events import book_on_calendar
+
+        created = None
         try:
+            created = book_on_calendar(
+                slot.staff_id,
+                slot.date,
+                slot.time,
+                _visit_minutes(services),
+                _visit_title(services),
+                description=code,
+            )
+            booking.google_event_id = created["event_id"]
+            booking.google_calendar_id = created["calendar_id"]
             db.commit()
         except IntegrityError:
             db.rollback()
+            _drop_event(created)
             return None
+        except RuntimeError as exc:
+            db.rollback()
+            _drop_event(created)
+            raise VoiceDenied(str(exc)) from exc
+        except Exception as exc:
+            db.rollback()
+            _drop_event(created)
+            raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
         booking = db.scalar(booking_query().where(Booking.id == booking.id))
         return booking_payload(booking) if booking else None
 
@@ -161,6 +255,14 @@ def cancel_booking(user_id: int, code: str) -> dict | None:
         if loaded is None or not booking_payload(loaded)["active"]:
             db.rollback()
             return None
+        if booking.google_event_id and booking.google_calendar_id:
+            from app.calendar.events import delete_calendar_event
+
+            try:
+                delete_calendar_event(booking.google_calendar_id, booking.google_event_id)
+            except Exception as exc:
+                db.rollback()
+                raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
         booking.status = "cancelled"
         if slot.status == "booked":
             slot.status = "available"
@@ -180,33 +282,70 @@ def reschedule_booking(user_id: int, code: str, new_slot_id: str) -> dict | None
         )
         if booking is None:
             raise VoiceDenied("That appointment was not found on this account.")
-        if new_slot_id == booking.slot_id:
-            raise VoiceDenied("That is already the time on this appointment.")
         current = db.scalar(booking_query().where(Booking.id == booking.id))
         if current is None or not booking_payload(current)["active"]:
             raise VoiceDenied("Only an upcoming appointment can be moved.")
-        first_id, second_id = sorted([booking.slot_id, new_slot_id])
-        locked = {}
-        for slot_id in (first_id, second_id):
-            locked[slot_id] = lock_slot(db, slot_id)
-        old_slot = locked.get(booking.slot_id)
-        new_slot = locked.get(new_slot_id)
-        if (
-            old_slot is None
-            or new_slot is None
-            or new_slot.status != "available"
-            or slot_is_past(new_slot.date, new_slot.time)
-        ):
+        ensured = _ensure_opening(db, new_slot_id)
+        if ensured is None:
             db.rollback()
             return None
-        old_slot.status = "available"
-        new_slot.status = "booked"
-        booking.slot_id = new_slot.slot_id
+        locked = {
+            slot_id: lock_slot(db, slot_id)
+            for slot_id in sorted({booking.slot_id, ensured.slot_id})
+        }
+        old_slot = locked.get(booking.slot_id)
+        new_slot = locked.get(ensured.slot_id)
+        if old_slot is None or new_slot is None:
+            db.rollback()
+            return None
+        if new_slot.slot_id == old_slot.slot_id:
+            raise VoiceDenied("That is already the time on this appointment.")
+        if new_slot.status != "available" or slot_is_past(new_slot.date, new_slot.time):
+            db.rollback()
+            return None
+        payload = booking_payload(current)
+        from app.calendar.events import book_on_calendar, delete_calendar_event
+
+        created = None
+        previous_event = booking.google_event_id
+        previous_calendar = booking.google_calendar_id
         try:
+            created = book_on_calendar(
+                new_slot.staff_id,
+                new_slot.date,
+                new_slot.time,
+                _visit_minutes(payload["services"]),
+                _visit_title(payload["services"]),
+                description=booking.code,
+                ignore_event_id=previous_event,
+            )
+            old_slot.status = "available"
+            new_slot.status = "booked"
+            booking.slot_id = new_slot.slot_id
+            booking.google_event_id = created["event_id"]
+            booking.google_calendar_id = created["calendar_id"]
             db.commit()
         except IntegrityError:
             db.rollback()
+            _drop_event(created)
             return None
+        except RuntimeError as exc:
+            db.rollback()
+            _drop_event(created)
+            raise VoiceDenied(str(exc)) from exc
+        except VoiceDenied:
+            db.rollback()
+            _drop_event(created)
+            raise
+        except Exception as exc:
+            db.rollback()
+            _drop_event(created)
+            raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
+        if previous_event and previous_calendar:
+            try:
+                delete_calendar_event(previous_calendar, previous_event)
+            except Exception:
+                pass
         booking_id = booking.id
         db.expire_all()
         moved = db.scalar(booking_query().where(Booking.id == booking_id))

@@ -13,6 +13,7 @@ from app.voice.availability import check_availability
 from app.voice.action_log import log_action
 from app.voice.catalog import add_services, find_services, remove_services, service_details
 from app.voice.session_state import as_bool, extract_request
+from app.observability.langfuse_tracing import trace_tool_call
 
 def end_session(session: dict, confirmed: bool = False, **_kwargs: object) -> str:
     """Ask before hanging up. The cart stays as it is."""
@@ -48,21 +49,41 @@ HANDLERS = {
 }
 
 
-def dispatch(session: dict, name: str, params: dict | None = None) -> str:
-    """Run one tool and return its text. Failures stay in the tool result."""
-    handler = HANDLERS.get(name)
-    if not handler:
-        result = f"Unknown function: {name}"
-        log_action(session, name, params, result)
+def dispatch(
+    session: dict,
+    name: str,
+    params: dict | None = None,
+) -> str:
+    """Trace tool execution while preserving existing dispatch behavior."""
+
+    params = params or {}
+
+    def execute() -> str:
+        handler = HANDLERS.get(name)
+
+        if not handler:
+            result = f"Unknown function: {name}"
+            log_action(session, name, params, result)
+            return result
+
+        try:
+            result = handler(session, **params)
+        except TypeError as exc:
+            result = f"Bad arguments for {name}: {exc}"
+        except Exception as exc:
+            result = f"Tool error in {name}: {exc}"
+
+        logged = dict(params)
+
+        if name == "end_session" and session.get("end_reason") == "goodbye":
+            logged["reason"] = "goodbye"
+
+        log_action(session, name, logged, result)
         return result
-    try:
-        result = handler(session, **(params or {}))
-    except TypeError as exc:
-        result = f"Bad arguments for {name}: {exc}"
-    except Exception as exc:  # noqa: BLE001 — return tool failures to the agent
-        result = f"Tool error in {name}: {exc}"
-    logged = dict(params or {})
-    if name == "end_session" and session.get("end_reason") == "goodbye":
-        logged["reason"] = "goodbye"
-    log_action(session, name, logged, result)
-    return result
+
+    return trace_tool_call(
+        session=session,
+        tool_name=name,
+        arguments=params,
+        execute=execute,
+    )

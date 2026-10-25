@@ -76,6 +76,13 @@ def init_db() -> None:
                         ALTER TABLE otp_codes ALTER COLUMN phone DROP NOT NULL;
                         CREATE UNIQUE INDEX IF NOT EXISTS uq_otp_codes_email ON otp_codes (email);
                     END IF;
+                    IF EXISTS (
+                        SELECT 1 FROM information_schema.tables
+                        WHERE table_name = 'bookings'
+                    ) THEN
+                        ALTER TABLE bookings ADD COLUMN IF NOT EXISTS google_event_id VARCHAR(256);
+                        ALTER TABLE bookings ADD COLUMN IF NOT EXISTS google_calendar_id VARCHAR(256);
+                    END IF;
                 END $$;
                 """
             )

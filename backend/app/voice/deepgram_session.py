@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import threading
 import time
@@ -31,72 +32,29 @@ from deepgram.agent.v1.types import (
     AgentV1SettingsAudioOutput,
 )
 from deepgram.core.events import EventType
-from deepgram.types.speak_settings_v1 import SpeakSettingsV1
-from deepgram.types.speak_settings_v1endpoint import SpeakSettingsV1Endpoint
-from deepgram.types.speak_settings_v1provider import (
-    SpeakSettingsV1Provider_Deepgram,
-    SpeakSettingsV1Provider_ElevenLabs,
-)
-from deepgram.types.think_settings_v1 import ThinkSettingsV1
-from deepgram.types.think_settings_v1provider import ThinkSettingsV1Provider_Google
 
 from app.voice.salon_backend import (
-    SALON_SUPPORT_FUNCTIONS,
     apply_saved_booking,
     dispatch,
     ensure_services_indexed,
     new_session,
-    system_prompt,
 )
+from app.voice.speak import speak_settings
+from app.voice.think import think_settings
 from app.db.store import save_message
+from app.observability.langfuse_tracing import (
+    begin_session_trace,
+    finish_session_trace,
+    trace_session_error,
+    trace_thinking,
+    trace_turn,
+)
 from app.voice.action_log import log_action
 
 Outgoing = tuple[str, Any]
 IDLE_SECONDS = 45
 GOODBYE_LINE = "I'll let you go for now. Call again whenever you'd like."
-
-
-def use_elevenlabs() -> bool:
-    """USE_ELEVENLABS=true speaks with ElevenLabs. Anything else uses Deepgram."""
-    return os.environ.get("USE_ELEVENLABS", "").strip().lower() in {"1", "true", "yes", "on"}
-
-
-def _elevenlabs_voice() -> tuple[str, str] | None:
-    """Return the ElevenLabs key and voice id when the flag is on.
-
-    The voice must be a premade voice on a free key. Library voices are rejected.
-    """
-    if not use_elevenlabs():
-        return None
-    api_key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
-    voice_id = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
-    if not api_key or not voice_id:
-        raise RuntimeError("USE_ELEVENLABS is on, but ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID are required.")
-    return api_key, voice_id
-
-
-def _speak_settings() -> SpeakSettingsV1:
-    """Speak with ElevenLabs only when USE_ELEVENLABS is on. Otherwise use Meena."""
-    elevenlabs = _elevenlabs_voice()
-    if elevenlabs is None:
-        return SpeakSettingsV1(
-            provider=SpeakSettingsV1Provider_Deepgram(
-                type="deepgram",
-                version="v2",
-                model="flux-meena-en",
-            )
-        )
-    api_key, voice_id = elevenlabs
-    return SpeakSettingsV1(
-        provider=SpeakSettingsV1Provider_ElevenLabs(
-            type="eleven_labs",
-            model_id="eleven_turbo_v2_5",
-        ),
-        endpoint=SpeakSettingsV1Endpoint(
-            url=f"wss://api.elevenlabs.io/v1/text-to-speech/{voice_id}/multi-stream-input",
-            headers={"xi-api-key": api_key},
-        ),
-    )
+logger = logging.getLogger("uvicorn.error")
 
 
 class DeepgramSalonSession:
@@ -182,6 +140,7 @@ class DeepgramSalonSession:
         if not self._open and self._agent_cm is None:
             return
         self._open = False
+        finish_session_trace(self.salon, self._end_reason or "closed")
         agent_cm = self._agent_cm
         self._agent_cm = None
         self.agent = None
@@ -227,19 +186,8 @@ class DeepgramSalonSession:
                         ],
                     )
                 ),
-                think=ThinkSettingsV1(
-                    provider=ThinkSettingsV1Provider_Google(
-                        type="google", 
-                        model="gemini-3.1-flash-lite",
-                    ),
-                    prompt=system_prompt(
-                        self.caller_name,
-                        self.recap,
-                        bilingual=_elevenlabs_voice() is not None,
-                    ),
-                    functions=SALON_SUPPORT_FUNCTIONS,
-                ),
-                speak=_speak_settings(),
+                think=think_settings(self.caller_name, self.recap),
+                speak=speak_settings(),
                 greeting=self.greeting,
             ),
         )
@@ -257,6 +205,7 @@ class DeepgramSalonSession:
         if msg_type == "SettingsApplied":
             self._settings_applied.set()
             self._emit("json", {"type": "status", "state": "live"})
+            begin_session_trace(self.salon, self.greeting)
         elif msg_type == "ConversationText":
             role = getattr(message, "role", "assistant")
             content = getattr(message, "content", "") or ""
@@ -264,8 +213,19 @@ class DeepgramSalonSession:
                 stored_role = "user" if role == "user" else "assistant"
                 if stored_role == "user":
                     self._note_user_speech()
+                    self.salon["last_user_message"] = content
                 save_message(self.conversation_id, stored_role, content)
                 self._emit("json", {"type": "transcript", "role": stored_role, "content": content})
+                trace_turn(self.salon, stored_role, content)
+        elif msg_type == "AgentThinking":
+            content = getattr(message, "content", "") or ""
+            if content:
+                logger.info(
+                    "\n\nconversation=%s agent_thinking=%s\n\n",
+                    self.conversation_id,
+                    " ".join(content.split())[:400],
+                )
+                trace_thinking(self.salon, content)
         elif msg_type == "UserStartedSpeaking":
             self._note_user_speech()
         elif msg_type == "AgentStartedSpeaking":
@@ -286,6 +246,7 @@ class DeepgramSalonSession:
             if not self._settings_applied.is_set():
                 self._startup_error = str(description)
                 self._settings_applied.set()
+            trace_session_error(self.salon, str(description))
             self._emit("json", {"type": "error", "message": str(description)})
             self._emit("json", {"type": "speaking", "value": False})
             self._flush_choice_list()
@@ -296,6 +257,7 @@ class DeepgramSalonSession:
         if choice_list:
             self._emit("json", {"type": "choice_list", "content": choice_list})
             save_message(self.conversation_id, "choice", choice_list)
+            trace_turn(self.salon, "choice", choice_list)
 
     def _handle_function_call(self, fn: Any) -> None:
         if not self.agent:
@@ -324,6 +286,7 @@ class DeepgramSalonSession:
             )
 
     def _on_error(self, error: Any) -> None:
+        trace_session_error(self.salon, str(error))
         self._emit("json", {"type": "error", "message": str(error)})
 
     def _keepalive_loop(self) -> None:

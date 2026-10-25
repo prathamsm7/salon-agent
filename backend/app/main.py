@@ -6,8 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
 from app.api.bookings import router as bookings_router
+from app.api.calender_test import router as calender_test_router
 from app.api.voice import router as voice_router
 from app.db.session import init_db
+from app.observability.langfuse_tracing import flush_langfuse
 
 
 def _cors_origins() -> list[str]:
@@ -18,7 +20,11 @@ def _cors_origins() -> list[str]:
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     init_db()
-    yield
+
+    try:
+        yield
+    finally:
+        flush_langfuse()
 
 
 app = FastAPI(title="Salon Booking Voice Agent API", lifespan=lifespan)
@@ -35,6 +41,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/auth")
 app.include_router(bookings_router, prefix="/api")
 app.include_router(voice_router, prefix="/api")
+app.include_router(calender_test_router, prefix="/api/calender-test")
 
 
 @app.get("/health")

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from app.db.slots import slots_for_date
-from app.salon_time import clock_hour, slot_is_past
+from app.calendar.schedule import openings_for_date
+from app.salon_time import slot_is_past, slot_start
 from app.voice.session_state import set_choice_list
 from app.voice.text_format import format_slots
+
+MAX_SHOWN = 10
 
 
 def find_available_slots(
@@ -26,7 +28,10 @@ def find_available_slots(
             continue
         if time_value and slot.get("time") != time_value:
             continue
-        hour = clock_hour(slot.get("time") or "")
+        hour = None
+        start = slot_start(slot.get("date") or "", slot.get("time") or "")
+        if start is not None:
+            hour = start.hour
         if part_of_day == "morning" and (hour is None or hour >= 12):
             continue
         if part_of_day == "afternoon" and (hour is None or hour < 12 or hour >= 17):
@@ -51,9 +56,42 @@ def find_available_slots(
             }
         )
     filtered.sort(
-        key=lambda item: (item["date"], clock_hour(item["time"]) or 0, item["staff_name"])
+        key=lambda item: (
+            item["date"],
+            slot_start(item["date"], item["time"]) or "",
+            item["staff_name"],
+        )
     )
     return filtered[:limit]
+
+
+def nearest_slots(
+    slots: list[dict],
+    date_value: str,
+    time_value: str,
+    staff_pref: str | None,
+    any_staff: bool,
+) -> list[dict]:
+    """Up to 10 open times closest to the clock time that was not available."""
+    pool = find_available_slots(
+        slots,
+        date_value=date_value,
+        staff_pref=staff_pref,
+        any_staff=any_staff,
+        limit=500,
+    )
+    target = slot_start(date_value, time_value)
+    if target is None:
+        return pool[:MAX_SHOWN]
+
+    def distance(item: dict) -> int:
+        start = slot_start(item["date"], item["time"])
+        if start is None:
+            return 10**9
+        return abs(int((start - target).total_seconds()))
+
+    pool.sort(key=lambda item: (distance(item), item["time"], item["staff_name"]))
+    return pool[:MAX_SHOWN]
 
 
 def check_availability(
@@ -64,7 +102,7 @@ def check_availability(
     part_of_day: str | None = None,
     **_,
 ) -> str:
-    """List open database slots and put the same list on screen."""
+    """List open calendar times and put the same list on screen."""
     date_value = date or session.get("date")
     if not date_value:
         return "Which date would you like for the appointment?"
@@ -84,7 +122,13 @@ def check_availability(
 
     staff_pref = staff or session.get("preferred_staff")
     any_staff = bool(staff_pref and staff_pref.strip().lower() == "any")
-    open_slots = slots_for_date(date_value)
+    duration = sum(
+        int(item.get("duration_min") or 0) for item in session.get("selected_services") or []
+    )
+    try:
+        open_slots = openings_for_date(date_value, duration)
+    except RuntimeError:
+        return "The schedule could not be read right now. Ask them to try again."
     matched = find_available_slots(
         open_slots,
         date_value=date_value,
@@ -92,18 +136,27 @@ def check_availability(
         staff_pref=None if any_staff else staff_pref,
         any_staff=any_staff,
         part_of_day=None if time else part,
-        limit=8 if time else 24,
+        limit=MAX_SHOWN,
     )
+    nearby = False
     if time and not matched:
-        matched = find_available_slots(
+        matched = nearest_slots(
             open_slots,
-            date_value=date_value,
-            time_value=None,
+            date_value,
+            time,
             staff_pref=None if any_staff else staff_pref,
             any_staff=any_staff,
-            limit=24,
         )
-        content = f"No slots are open at {time} on {date_value}.\n" + format_slots(matched)
+        nearby = True
+        closest = matched[0]["time"] if matched else None
+        if closest:
+            content = (
+                f"No slots are open at {time} on {date_value}. "
+                f"The nearest open time is {closest}.\n"
+                + format_slots(matched)
+            )
+        else:
+            content = f"No slots are open at {time} on {date_value}."
     else:
         content = format_slots(matched)
     session["available_slots"] = matched
@@ -111,10 +164,17 @@ def check_availability(
     for number, slot in enumerate(matched, start=1):
         panel.append(f"{number}) {slot.get('staff_name')} at {slot.get('time')}")
     set_choice_list(session, panel if matched else [])
+    if nearby:
+        return (
+            content
+            + "\n\nTell them that time is not open. Suggest only the nearest time, "
+            "and ask them to choose from the short list on screen. "
+            "Do not read the list aloud. Do not offer a time that is not in this list."
+        )
     return (
         content
         + "\n\nSay only that you found open times and ask them to choose from the list. "
-        "Do not read each time aloud."
+        "Do not read each time aloud. Do not offer a time that is not in this list."
     )
 
 

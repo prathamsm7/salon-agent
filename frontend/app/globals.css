@@ -200,6 +200,27 @@ a { color: inherit; }
 .kk-sign-card input:focus { border-color:#c99c77; box-shadow:0 0 0 3px rgba(183,120,74,.1); }
 .kk-sign-card .kk-primary { width:100%; margin-top:18px; border:0; }
 .kk-sign-card .kk-text-button { display:block; width:100%; margin:12px 0 0; }
+.kk-cal-page { min-height:100dvh; display:grid; place-items:start center; padding:32px 16px 48px; }
+.kk-cal-card { width:min(720px,100%); border:1px solid #e5d8ca; border-radius:25px; background:rgba(255,253,249,.92); box-shadow:0 25px 80px rgba(80,52,27,.08); padding:28px; }
+.kk-cal-card h1 { margin:8px 0 8px; font-family:Georgia,serif; font-size:36px; font-weight:400; letter-spacing:-.04em; }
+.kk-cal-card p { margin:0; color:#887669; font-size:13px; line-height:1.7; }
+.kk-cal-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; margin-top:8px; }
+.kk-cal-card label { display:block; margin-top:16px; color:#4c382c; font-size:12px; font-weight:600; }
+.kk-cal-card input,.kk-cal-card select { width:100%; margin-top:8px; border:1px solid #e4d7c8; border-radius:14px; background:white; padding:12px 14px; color:#3c2d22; outline:none; }
+.kk-cal-card input:focus,.kk-cal-card select:focus { border-color:#c99c77; box-shadow:0 0 0 3px rgba(183,120,74,.1); }
+.kk-cal-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+.kk-cal-actions .kk-primary,.kk-cal-actions .kk-secondary { border:0; }
+.kk-cal-actions .kk-secondary { border:1px solid #e0d0bf; background:transparent; }
+.kk-cal-section { margin-top:22px; border-top:1px solid #eee2d5; padding-top:16px; }
+.kk-cal-section h2 { margin:0 0 10px; font-family:Georgia,serif; font-size:20px; font-weight:400; letter-spacing:-.03em; }
+.kk-cal-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.kk-cal-list li { display:flex; justify-content:space-between; align-items:center; gap:12px; border:1px solid #eadfD2; border-radius:14px; background:#fffaf4; padding:12px 14px; }
+.kk-cal-list strong,.kk-cal-list small { display:block; }
+.kk-cal-list strong { font-size:13px; }
+.kk-cal-list small { margin-top:3px; color:#8a7768; font-size:11px; }
+.kk-cal-list a { color:#9e6e4b; font-size:12px; }
+.kk-cal-empty { margin:0; color:#8a7768; font-size:13px; }
+@media (max-width: 640px) { .kk-cal-grid { grid-template-columns:1fr; } .kk-cal-list li { align-items:flex-start; flex-direction:column; } }
 .kk-past-note { flex:0 0 auto; margin:0; border-top:1px solid #eee2d5; background:rgba(250,245,238,.92); padding:16px 19px; color:#887669; font-size:12px; line-height:1.6; }
 .kk-chat-shell button { transition:transform .15s,background .15s,opacity .15s; }
 .kk-chat-shell button:not(:disabled):active { transform:scale(.99); }

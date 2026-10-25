@@ -107,6 +107,8 @@ class Booking(Base):
         ForeignKey("conversations.id"), unique=True
     )
     status: Mapped[str] = mapped_column(String(16), default="confirmed", index=True)
+    google_event_id: Mapped[str | None] = mapped_column(String(256))
+    google_calendar_id: Mapped[str | None] = mapped_column(String(256))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
