@@ -49,13 +49,14 @@ def think_settings(caller_name: str, recap: str) -> ThinkSettingsV1:
         provider = ThinkSettingsV1Provider_OpenAi(
             type="open_ai",
             model=model,
-            reasoning_mode="minimal",
+            reasoning_mode="high",
         )
     else:
         provider = ThinkSettingsV1Provider_OpenAi(
             type="open_ai",
             model=model,
             temperature=0.4,
+            reasoning_mode="high",
         )
     logger.info(
         "Think provider is OpenAI BYO model %s. Turns are logged on your OpenAI account.",

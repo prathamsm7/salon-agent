@@ -1,9 +1,20 @@
-"""Book, list, cancel, and reschedule the signed-in customer's appointments."""
+"""Book, list, change, cancel, and reschedule the signed-in customer's appointments."""
 
 from __future__ import annotations
 
-from app.db.bookings import booking_for_user, cancel_booking, confirm_booking, reschedule_booking, user_bookings
+from datetime import timedelta
+
+from app.db.bookings import (
+    add_services_to_booking,
+    booking_for_user,
+    cancel_booking,
+    confirm_booking,
+    reschedule_booking,
+    user_bookings,
+)
 from app.db.errors import VoiceDenied
+from app.salon_time import slot_start
+from app.voice.catalog import _catalog
 from app.voice.session_state import apply_saved_booking, as_bool
 from app.voice.text_format import format_cart, format_slots
 
@@ -71,7 +82,12 @@ def book_appointment(
     """Prepare a summary, then save the cart on a shown slot after a clear yes."""
     confirmed = as_bool(confirmed)
     if session.get("booking_id") and session.get("booking_status") == "confirmed":
-        return "This chat already has an appointment. Reschedule or cancel that one."
+        return (
+            "This chat already has an appointment. "
+            "Call add_services to add a service to it. "
+            "The calendar is checked first. "
+            "Do not say it was added until that tool answers."
+        )
     cart = session.get("selected_services") or []
     if not cart:
         return "The cart is empty. Add a service before booking."
@@ -86,6 +102,7 @@ def book_appointment(
     if not ready:
         session["pending_cancel_id"] = None
         session["pending_reschedule"] = None
+        session["pending_service_add"] = None
         session["pending_slot_id"] = slot_id
         chosen = shown.get(slot_id) or {}
         return (
@@ -141,6 +158,7 @@ def cancel_appointment(
     if not ready:
         session["pending_slot_id"] = None
         session["pending_reschedule"] = None
+        session["pending_service_add"] = None
         session["pending_cancel_id"] = code
         services = ", ".join(service["name"] for service in current["services"]) or "the saved services"
         return (
@@ -197,6 +215,7 @@ def reschedule_appointment(
     if not ready:
         session["pending_slot_id"] = None
         session["pending_cancel_id"] = None
+        session["pending_service_add"] = None
         session["pending_reschedule"] = {"booking_id": code, "slot_id": slot_id}
         chosen = shown.get(slot_id) or {}
         return (
@@ -221,6 +240,89 @@ def reschedule_appointment(
         f"Moved the appointment to {moved.get('staff_name')} "
         f"at {moved.get('time')} on {moved.get('date')}.\n"
         f"booking_code: {moved.get('booking_id')}. {_CODE_NOTE}"
+    )
+
+
+def _spoken_end(date_value: str | None, time_value: str | None, minutes: int) -> str | None:
+    if not date_value or not time_value:
+        return None
+    start = slot_start(date_value, time_value)
+    if start is None:
+        return None
+    end = start + timedelta(minutes=minutes)
+    return end.strftime("%I:%M %p").lstrip("0")
+
+
+def _upcoming_code(session: dict, booking_id: str | None) -> str | None:
+    """Use the chat's appointment, or the only upcoming one on the account."""
+    if booking_id:
+        return booking_id
+    if session.get("booking_id"):
+        return session["booking_id"]
+    user_id = session.get("user_id")
+    if not user_id:
+        return None
+    active = user_bookings(user_id)["active"]
+    if len(active) == 1:
+        return active[0]["booking_id"]
+    return None
+
+
+def extend_booked_services(
+    session: dict,
+    service_ids: list[str] | None = None,
+    booking_id: str | None = None,
+) -> str:
+    """Check the calendar first. Update the appointment only when the longer visit fits."""
+    ids = [str(item) for item in (service_ids or []) if item]
+    if not ids:
+        return "Which shown service should I add to the appointment?"
+    user_id = session.get("user_id")
+    if not user_id:
+        return "Sign in before changing an appointment."
+    code = _upcoming_code(session, booking_id)
+    if not code:
+        active = user_bookings(user_id)["active"]
+        if not active:
+            return (
+                "There is no upcoming appointment. "
+                "Add the service to the cart and book a new time."
+            )
+        return (
+            "Which upcoming appointment should get this service?\n"
+            + _format_saved(active, "Upcoming")
+            + "\nCall add_services again with that booking_code. Do not say it was added."
+        )
+    current = booking_for_user(user_id, code)
+    if not current:
+        return "That appointment was not found on this account."
+    if not current["active"]:
+        return "Only an upcoming appointment can take another service."
+    catalog = _catalog(session)
+    chosen = [catalog[sid] for sid in ids if sid in catalog]
+    if not chosen:
+        return "Search services first, then add one id from the list just shown."
+    already = {item["service_id"] for item in current["services"]}
+    fresh = [service for service in chosen if service.get("service_id") not in already]
+    if not fresh:
+        return "Those services are already on this appointment. Do not add them again."
+    try:
+        saved = add_services_to_booking(user_id, code, fresh)
+    except VoiceDenied as exc:
+        return str(exc)
+    if session.get("booking_id") in {None, code}:
+        apply_saved_booking(session, saved)
+    names = ", ".join(item["name"] for item in fresh)
+    minutes = sum(int(item.get("duration_min") or 0) for item in (saved.get("services") or []))
+    end = _spoken_end(saved.get("date"), saved.get("time"), minutes)
+    until = f" The visit now ends at {end}." if end else ""
+    return (
+        "The calendar check is finished. Tell the customer now that "
+        f"{names} was added to the appointment with {saved.get('staff_name')} "
+        f"at {saved.get('time')} on {saved.get('date')}.{until} "
+        "Do not say you are still checking.\n"
+        f"booking_code: {saved.get('booking_id')}. {_CODE_NOTE}\n"
+        f"Services:\n{format_cart(saved.get('services') or [])}"
     )
 
 
@@ -259,7 +361,8 @@ APPOINTMENT_FUNCTIONS = [
             "The first call only prepares a summary. "
             "Set confirmed to true only after the customer says yes to that summary. "
             "Last means the last line of the shown list. Do not guess a slot id. "
-            "Cart must already have services. Do not call this when the chat already has an appointment."
+            "Cart must already have services. Do not call this when the chat already has an appointment. "
+            "To add a service to that appointment, call add_services."
         ),
         "parameters": {
             "type": "object",

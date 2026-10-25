@@ -10,10 +10,15 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 
 from app.db.errors import VoiceDenied
-from app.db.models import Booking, BookingService, Conversation, Slot
+from app.db.models import Booking, BookingService, Conversation, Slot, User
 from app.db.session import SessionLocal
 from app.db.slots import lock_slot
-from app.salon_time import salon_now, slot_is_past, slot_start
+from app.salon_time import change_locked, salon_now, slot_is_past, slot_start
+
+_LOCKED = (
+    "This appointment is within 12 hours, so it cannot be rescheduled or updated. "
+    "Tell the customer the change has to be made more than 12 hours before the start."
+)
 
 
 def booking_query():
@@ -65,6 +70,15 @@ def _visit_title(services: list[dict]) -> str:
         if str(item.get("name") or "").strip()
     ]
     return ", ".join(names)[:180] or "Salon appointment"
+
+
+def _guest_email(db, user_id: int | None) -> str | None:
+    """The signed-in guest's email, used to invite them onto the calendar event."""
+    if user_id is None:
+        return None
+    user = db.get(User, user_id)
+    email = (user.email or "").strip() if user else ""
+    return email or None
 
 
 def _visit_minutes(services: list[dict]) -> int:
@@ -188,6 +202,7 @@ def confirm_booking(
                 _visit_minutes(services),
                 _visit_title(services),
                 description=code,
+                guest_email=_guest_email(db, user_id),
             )
             booking.google_event_id = created["event_id"]
             booking.google_calendar_id = created["calendar_id"]
@@ -206,6 +221,121 @@ def confirm_booking(
             raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
         booking = db.scalar(booking_query().where(Booking.id == booking.id))
         return booking_payload(booking) if booking else None
+
+
+def add_services_to_booking(user_id: int, code: str, services: list[dict]) -> dict:
+    """Append services to an upcoming appointment and extend its calendar event."""
+    with SessionLocal() as db:
+        booking = db.scalar(
+            select(Booking)
+            .where(Booking.user_id == user_id, Booking.code == code)
+            .with_for_update()
+        )
+        if booking is None:
+            raise VoiceDenied("That appointment was not found on this account.")
+        current = db.scalar(booking_query().where(Booking.id == booking.id))
+        if current is None or not booking_payload(current)["active"]:
+            raise VoiceDenied("Only an upcoming appointment can take another service.")
+        payload = booking_payload(current)
+        existing_ids = {item["service_id"] for item in payload["services"]}
+        fresh = [
+            service
+            for service in services
+            if str(service.get("service_id") or "") not in existing_ids
+        ]
+        if not fresh:
+            raise VoiceDenied("Those services are already on this appointment.")
+        merged = [*payload["services"], *fresh]
+        slot = current.slot
+        if slot is None:
+            raise VoiceDenied("That appointment has no time stored.")
+        staff_id = slot.staff_id
+        date_value = slot.date
+        time_value = slot.time
+        event_id = booking.google_event_id
+        minutes = _visit_minutes(merged)
+        if change_locked(date_value, time_value):
+            raise VoiceDenied(_LOCKED)
+    from app.calendar.schedule import visit_is_free
+
+    try:
+        visit_is_free(staff_id, date_value, time_value, minutes, event_id)
+    except RuntimeError as exc:
+        raise VoiceDenied(
+            "The calendar check is finished. Tell the customer now that the appointment "
+            "cannot be updated because the slot is unavailable. "
+            "The current appointment stays as it is. Do not say you are still checking."
+        ) from exc
+    with SessionLocal() as db:
+        booking = db.scalar(
+            select(Booking)
+            .where(Booking.user_id == user_id, Booking.code == code)
+            .with_for_update()
+        )
+        if booking is None:
+            raise VoiceDenied("That appointment was not found on this account.")
+        current = db.scalar(booking_query().where(Booking.id == booking.id))
+        if current is None or not booking_payload(current)["active"]:
+            raise VoiceDenied("Only an upcoming appointment can take another service.")
+        from app.calendar.events import book_on_calendar, update_event
+
+        created = None
+        guest = _guest_email(db, booking.user_id)
+        try:
+            for service in fresh:
+                db.add(
+                    BookingService(
+                        booking_id=booking.id,
+                        service_id=str(service.get("service_id") or ""),
+                        name=str(service.get("name") or "Service"),
+                        price_inr=int(service.get("price_inr") or 0),
+                        duration_min=int(service.get("duration_min") or 0),
+                    )
+                )
+            db.flush()
+            if booking.google_event_id and booking.google_calendar_id:
+                update_event(
+                    booking.google_calendar_id,
+                    booking.google_event_id,
+                    slot.staff_id,
+                    slot.date,
+                    slot.time,
+                    _visit_minutes(merged),
+                    _visit_title(merged),
+                    guest_email=guest,
+                )
+            else:
+                created = book_on_calendar(
+                    slot.staff_id,
+                    slot.date,
+                    slot.time,
+                    _visit_minutes(merged),
+                    _visit_title(merged),
+                    description=booking.code,
+                    guest_email=guest,
+                )
+                booking.google_event_id = created["event_id"]
+                booking.google_calendar_id = created["calendar_id"]
+            db.commit()
+        except RuntimeError as exc:
+            db.rollback()
+            _drop_event(created)
+            text = str(exc)
+            if "already has a booking" in text or "8:00 PM" in text:
+                raise VoiceDenied(
+                    "The calendar check is finished. Tell the customer now that the appointment "
+                    "cannot be updated because the slot is unavailable. "
+                    "The current appointment stays as it is. Do not say you are still checking."
+                ) from exc
+            raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
+        except Exception as exc:
+            db.rollback()
+            _drop_event(created)
+            raise VoiceDenied("The calendar could not be updated. Ask them to try again.") from exc
+        booking_id = booking.id
+        db.expire_all()
+        saved = db.scalar(booking_query().where(Booking.id == booking_id))
+        return booking_payload(saved) if saved else payload
 
 
 def user_bookings(user_id: int) -> dict:
@@ -300,6 +430,8 @@ def reschedule_booking(user_id: int, code: str, new_slot_id: str) -> dict | None
             return None
         if new_slot.slot_id == old_slot.slot_id:
             raise VoiceDenied("That is already the time on this appointment.")
+        if change_locked(old_slot.date, old_slot.time):
+            raise VoiceDenied(_LOCKED)
         if new_slot.status != "available" or slot_is_past(new_slot.date, new_slot.time):
             db.rollback()
             return None
@@ -318,6 +450,7 @@ def reschedule_booking(user_id: int, code: str, new_slot_id: str) -> dict | None
                 _visit_title(payload["services"]),
                 description=booking.code,
                 ignore_event_id=previous_event,
+                guest_email=_guest_email(db, booking.user_id),
             )
             old_slot.status = "available"
             new_slot.status = "booked"

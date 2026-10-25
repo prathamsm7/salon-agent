@@ -5,6 +5,7 @@ from __future__ import annotations
 from app.voice.appointments import (
     book_appointment,
     cancel_appointment,
+    extend_booked_services,
     list_bookings,
     read_booking,
     reschedule_appointment,
@@ -33,11 +34,18 @@ def end_session(session: dict, confirmed: bool = False, **_kwargs: object) -> st
     return "Say one short goodbye and stop. Do not ask another question. The call will close after you finish."
 
 
+def _add_services(session: dict, service_ids: list[str] | None = None, booking_id: str | None = None, **kwargs) -> str:
+    """A booked appointment is checked on the calendar before it is changed."""
+    if booking_id or (session.get("booking_id") and session.get("booking_status") == "confirmed"):
+        return extend_booked_services(session, service_ids, booking_id)
+    return add_services(session, service_ids, **kwargs)
+
+
 HANDLERS = {
     "extract_request": extract_request,
     "find_services": find_services,
     "remove_services": remove_services,
-    "add_services": add_services,
+    "add_services": _add_services,
     "service_details": service_details,
     "check_availability": check_availability,
     "book_appointment": book_appointment,

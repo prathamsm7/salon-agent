@@ -1,6 +1,6 @@
 """Salon clock helpers. Appointments are scheduled in Asia/Kolkata."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 SALON_TZ = ZoneInfo("Asia/Kolkata")
@@ -49,6 +49,18 @@ def slot_start(date_value: str, time_value: str) -> datetime | None:
     except (IndexError, ValueError):
         return None
     return datetime(year, month, day, hour, minute, tzinfo=SALON_TZ)
+
+
+CHANGE_LOCK_HOURS = 12
+
+
+def change_locked(date_value: str, time_value: str, now: datetime | None = None) -> bool:
+    """True when the visit starts in under 12 hours and can no longer be moved or extended."""
+    start = slot_start(date_value, time_value)
+    if start is None:
+        return False
+    now = now or salon_now()
+    return start - now <= timedelta(hours=CHANGE_LOCK_HOURS)
 
 
 def slot_is_past(date_value: str, time_value: str, now: datetime | None = None) -> bool:

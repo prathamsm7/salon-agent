@@ -125,6 +125,20 @@ def ensure_free(staff_id: str, start: datetime, end: datetime, ignore_event_id: 
         raise RuntimeError("That stylist already has a booking at this time.")
 
 
+def visit_is_free(
+    staff_id: str,
+    date_value: str,
+    time_value: str,
+    duration_min: int,
+    ignore_event_id: str | None = None,
+) -> bool:
+    """True when this stylist can hold the whole visit without hitting another appointment."""
+    start, end = window(date_value, time_value, duration_min)
+    ensure_hours(start, end)
+    ensure_free(staff_id, start, end, ignore_event_id)
+    return True
+
+
 def _staff_names() -> list[tuple[str, str]]:
     with SessionLocal() as db:
         rows = db.execute(select(Staff.staff_id, Staff.name).order_by(Staff.name)).all()

@@ -257,6 +257,11 @@ def add_services(session: dict, service_ids: list[str] | None = None, **_) -> st
 
 def remove_services(session: dict, service_ids: list[str] | None = None, **_) -> str:
     """Drop service ids from the cart. Ids that are not in the cart are ignored."""
+    if session.get("booking_id") and session.get("booking_status") == "confirmed":
+        return (
+            "This chat already has an appointment, so nothing was removed. "
+            "Do not tell them a service was taken off the appointment."
+        )
     if not service_ids:
         return "Which service ids should I remove?"
     drop = set(service_ids)
@@ -329,14 +334,22 @@ SERVICE_FUNCTIONS = [
     {
         "name": "add_services",
         "description": (
-            "Add one chosen service to the cart. Call only after the customer picks a shown option "
-            "or asks to add that service. Do not call this for a recommendation, an explanation, "
-            "a browse, or a question. Copy only the chosen ids from the latest shown list."
+            "Add one chosen service. For a new booking this updates the cart. "
+            "For an appointment they already have, the calendar is checked first and the appointment "
+            "changes only when the longer visit fits. "
+            "Call only after the customer picks a shown option or asks to add that service. "
+            "Do not call this for a recommendation, an explanation, a browse, or a question. "
+            "Copy only the chosen ids from the latest shown list. "
+            "Pass booking_id when they have more than one upcoming appointment."
         ),
         "parameters": {
             "type": "object",
             "properties": {
                 "service_ids": {"type": "array", "items": {"type": "string"}},
+                "booking_id": {
+                    "type": "string",
+                    "description": "booking_code when they chose one of several upcoming appointments.",
+                },
             },
             "required": ["service_ids"],
         },
