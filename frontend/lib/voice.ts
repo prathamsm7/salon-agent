@@ -173,21 +173,37 @@ export function connectVoice(
     for (const chunk of queued) playPcm(chunk);
   });
 
-  function markAudible() {
+  function armQuiet() {
     window.clearTimeout(drainTimer);
+    if (playback.state !== "running") {
+      void playback.resume();
+      agentSpeaking = false;
+      if (!closing && becameLive) handlers.onStatus("live");
+      return;
+    }
+    const delay = Math.max(0, (nextPlayTime - playback.currentTime) * 1000);
+    drainTimer = window.setTimeout(() => {
+      const remaining = (nextPlayTime - playback.currentTime) * 1000;
+      if (remaining > 60) {
+        armQuiet();
+        return;
+      }
+      agentSpeaking = false;
+      if (!closing && becameLive) handlers.onStatus("live");
+    }, delay + 120);
+  }
+
+  function markAudible() {
     if (!agentSpeaking) {
       agentSpeaking = true;
       handlers.onStatus("speaking");
     }
+    // A late chunk must extend playback, not cancel the unmute forever.
+    armQuiet();
   }
 
   function markQuiet() {
-    window.clearTimeout(drainTimer);
-    const delay = Math.max(0, (nextPlayTime - playback.currentTime) * 1000);
-    drainTimer = window.setTimeout(() => {
-      agentSpeaking = false;
-      if (!closing && becameLive) handlers.onStatus("live");
-    }, delay + 80);
+    armQuiet();
   }
 
   function playPcm(bytes: ArrayBuffer) {

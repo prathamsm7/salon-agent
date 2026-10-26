@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import os
+import queue
 import threading
 import time
 from typing import Any
@@ -94,8 +95,11 @@ class DeepgramSalonSession:
         self.agent = None
         now = time.monotonic()
         self._last_user_speech = now
+        self._last_activity = now
         self._quiet_since: float | None = None
         self._agent_speaking = False
+        self._tools_in_flight = 0
+        self._functions: queue.Queue = queue.Queue()
         self._end_after_audio = False
         self._end_reason: str | None = None
         self._end_deadline: float | None = None
@@ -114,6 +118,7 @@ class DeepgramSalonSession:
 
             self.agent.send_settings(self._settings())
             threading.Thread(target=self.agent.start_listening, daemon=True).start()
+            threading.Thread(target=self._function_loop, daemon=True).start()
             threading.Thread(target=self._keepalive_loop, daemon=True).start()
 
             if not self._settings_applied.wait(timeout=15):
@@ -143,6 +148,7 @@ class DeepgramSalonSession:
         if not self._open and self._agent_cm is None:
             return
         self._open = False
+        self._functions.put(None)
         finish_session_trace(self.salon, self._end_reason or "closed")
         agent_cm = self._agent_cm
         self._agent_cm = None
@@ -197,11 +203,19 @@ class DeepgramSalonSession:
 
     def _on_message(self, message: Any) -> None:
         if isinstance(message, bytes):
+            # Audio is still arriving, so this is not a quiet stretch.
+            self._note_activity()
             self._emit("audio", message)
             return
         if isinstance(message, AgentV1FunctionCallRequest):
             for fn in message.functions:
-                self._handle_function_call(fn)
+                # Answer off the socket thread. A calendar check must not stall Deepgram's read loop.
+                with self._send_lock:
+                    self._tools_in_flight += 1
+                self._quiet_since = None
+                self._note_activity()
+                self._cancel_idle_goodbye()
+                self._functions.put(fn)
             return
 
         msg_type = getattr(message, "type", type(message).__name__)
@@ -221,6 +235,9 @@ class DeepgramSalonSession:
                 self._emit("json", {"type": "transcript", "role": stored_role, "content": content})
                 trace_turn(self.salon, stored_role, content)
         elif msg_type == "AgentThinking":
+            self._note_activity()
+            if not self._agent_speaking and self._tools_in_flight == 0:
+                self._quiet_since = time.monotonic()
             content = getattr(message, "content", "") or ""
             if content:
                 logger.info(
@@ -233,10 +250,13 @@ class DeepgramSalonSession:
             self._note_user_speech()
         elif msg_type == "AgentStartedSpeaking":
             self._agent_speaking = True
+            self._quiet_since = None
+            self._note_activity()
             self._emit("json", {"type": "speaking", "value": True})
         elif msg_type == "AgentAudioDone":
             self._agent_speaking = False
             self._quiet_since = time.monotonic()
+            self._note_activity()
             self._emit("json", {"type": "speaking", "value": False})
             # After Tara finishes speaking so the chat order is reply, then options.
             self._flush_choice_list()
@@ -292,6 +312,24 @@ class DeepgramSalonSession:
         trace_session_error(self.salon, str(error))
         self._emit("json", {"type": "error", "message": str(error)})
 
+    def _function_loop(self) -> None:
+        while True:
+            fn = self._functions.get()
+            if fn is None or not self._open:
+                return
+            try:
+                self._handle_function_call(fn)
+            except Exception:
+                logger.exception("Voice function call failed")
+            finally:
+                with self._send_lock:
+                    self._tools_in_flight = max(0, self._tools_in_flight - 1)
+                    still_working = self._tools_in_flight > 0
+                self._note_activity()
+                if not still_working and not self._agent_speaking and self._open:
+                    # The guest's wait starts when the work finishes, not when they last spoke.
+                    self._quiet_since = time.monotonic()
+
     def _keepalive_loop(self) -> None:
         while self._open:
             time.sleep(5)
@@ -314,19 +352,36 @@ class DeepgramSalonSession:
 
     def _note_user_speech(self) -> None:
         self._last_user_speech = time.monotonic()
+        self._note_activity()
+        self._cancel_idle_goodbye()
+
+    def _note_activity(self) -> None:
+        """Tara is working or audio is still moving. This does not cancel a goodbye."""
+        self._last_activity = time.monotonic()
+
+    def _cancel_idle_goodbye(self) -> None:
         if self._finished or self._end_reason != "idle":
             return
-        # They spoke after the idle goodbye was queued. Stay on the call.
+        # They spoke, or a tool started, after the idle goodbye was queued. Stay on the call.
         self._end_after_audio = False
         self._end_reason = None
         self._end_deadline = None
 
     def _close_if_idle(self) -> None:
         """After Tara is quiet and the guest says nothing, say goodbye and close."""
-        if self._end_after_audio or self._agent_speaking or self._quiet_since is None:
+        if (
+            self._end_after_audio
+            or self._agent_speaking
+            or self._tools_in_flight
+            or self._quiet_since is None
+        ):
             return
         now = time.monotonic()
-        if now - self._quiet_since < IDLE_SECONDS or now - self._last_user_speech < IDLE_SECONDS:
+        if (
+            now - self._quiet_since < IDLE_SECONDS
+            or now - self._last_user_speech < IDLE_SECONDS
+            or now - self._last_activity < IDLE_SECONDS
+        ):
             return
         self._end_after_audio = True
         self._end_reason = "idle"
@@ -350,6 +405,11 @@ class DeepgramSalonSession:
         self.close()
 
     def _on_deepgram_close(self) -> None:
+        logger.info(
+            "Deepgram socket closed conversation=%s reason=%s",
+            self.conversation_id,
+            self._end_reason or "dropped",
+        )
         if self._end_reason:
             return
         self._emit("json", {"type": "status", "state": "closed"})

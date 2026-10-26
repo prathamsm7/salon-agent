@@ -1,11 +1,16 @@
 """PostgreSQL engine and session factory."""
 
+import logging
 import os
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
+
+logger = logging.getLogger("uvicorn.error")
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
 load_dotenv(BACKEND_DIR / ".env")
@@ -28,7 +33,14 @@ if not DATABASE_URL:
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
-    connect_args={"prepare_threshold": None},
+    pool_recycle=300,
+    connect_args={
+        "prepare_threshold": None,
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 10,
+        "keepalives_count": 5,
+    },
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
@@ -42,6 +54,25 @@ def get_db():
 
 
 def init_db() -> None:
+    """Create tables and seed. A dropped hosted connection is retried."""
+    last_error: OperationalError | None = None
+    for attempt in range(3):
+        try:
+            _init_db_once()
+            return
+        except OperationalError as exc:
+            last_error = exc
+            engine.dispose()
+            logger.warning(
+                "Database connection dropped during startup (attempt %s of 3). Retrying.",
+                attempt + 1,
+            )
+            time.sleep(1.5 * (attempt + 1))
+    assert last_error is not None
+    raise last_error
+
+
+def _init_db_once() -> None:
     from sqlalchemy import text
 
     from app.db.models import Base
