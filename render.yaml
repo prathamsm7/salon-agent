@@ -20,6 +20,12 @@ services:
         value: http://localhost:3000
       - key: DEEPGRAM_API_KEY
         sync: false
+      - key: THINK_PROVIDER
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        sync: false
       - key: USE_ELEVENLABS
         sync: false
       - key: ELEVENLABS_API_KEY
@@ -33,6 +39,24 @@ services:
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM
+        sync: false
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASE_URL
+        sync: false
+      - key: LANGFUSE_CAPTURE_USER_TEXT
+        sync: false
+      - key: GOOGLE_CALENDAR_SA_FILE
+        sync: false
+      - key: GOOGLE_CALENDAR_ST01
+        sync: false
+      - key: GOOGLE_CALENDAR_ST02
+        sync: false
+      - key: GOOGLE_CALENDAR_ST03
+        sync: false
+      - key: GOOGLE_CALENDAR_ST04
         sync: false
 
 databases:
