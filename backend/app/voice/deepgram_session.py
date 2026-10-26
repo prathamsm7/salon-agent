@@ -134,6 +134,8 @@ class DeepgramSalonSession:
     def send_audio(self, audio: bytes) -> None:
         if not self.agent or not audio:
             return
+        # The mic streams while the guest is on the call, including while they speak.
+        self._note_user_speech()
         with self._send_lock:
             self.agent.send_media(audio)
 
@@ -312,6 +314,12 @@ class DeepgramSalonSession:
 
     def _note_user_speech(self) -> None:
         self._last_user_speech = time.monotonic()
+        if self._finished or self._end_reason != "idle":
+            return
+        # They spoke after the idle goodbye was queued. Stay on the call.
+        self._end_after_audio = False
+        self._end_reason = None
+        self._end_deadline = None
 
     def _close_if_idle(self) -> None:
         """After Tara is quiet and the guest says nothing, say goodbye and close."""
