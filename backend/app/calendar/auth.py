@@ -1,5 +1,6 @@
 """One-time Google Calendar login and the saved credentials."""
 
+import json
 import os
 from pathlib import Path
 
@@ -29,19 +30,29 @@ def login() -> None:
     TOKEN_PATH.write_text(creds.to_json())
 
 
+def _missing_login() -> RuntimeError:
+    return RuntimeError(
+        "Calendar login is missing. From the backend folder run: "
+        ".venv/bin/python -m app.calender_login"
+    )
+
+
 def credentials() -> Credentials:
     """Load the saved calendar login, refreshing it when the access token expired."""
-    if not TOKEN_PATH.is_file():
-        raise RuntimeError(
-            "Calendar login is missing. From the backend folder run: "
-            ".venv/bin/python -m app.calender_login"
-        )
-    creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+    raw = os.environ.get("GOOGLE_CALENDAR_TOKEN_JSON", "").strip()
+    if raw:
+        creds = Credentials.from_authorized_user_info(json.loads(raw), SCOPES)
+    elif TOKEN_PATH.is_file():
+        creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)
+    else:
+        raise _missing_login()
     if creds.valid:
         return creds
     if creds.expired and creds.refresh_token:
         creds.refresh(Request())
-        TOKEN_PATH.write_text(creds.to_json())
+        if not raw:
+            TOKEN_PATH.parent.mkdir(parents=True, exist_ok=True)
+            TOKEN_PATH.write_text(creds.to_json())
         return creds
     raise RuntimeError(
         "Calendar login expired. From the backend folder run: "
