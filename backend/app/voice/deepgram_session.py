@@ -52,7 +52,8 @@ from app.observability.langfuse_tracing import (
 from app.voice.action_log import log_action
 
 Outgoing = tuple[str, Any]
-IDLE_SECONDS = 45
+# Guests often read the on-screen list before they speak. A short pause must not hang up.
+IDLE_SECONDS = 180
 GOODBYE_LINE = "I'll let you go for now. Call again whenever you'd like."
 logger = logging.getLogger("uvicorn.error")
 
