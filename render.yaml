@@ -40,6 +40,16 @@ services:
         sync: false
       - key: RESEND_FROM
         sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        sync: false
       - key: LANGFUSE_PUBLIC_KEY
         sync: false
       - key: LANGFUSE_SECRET_KEY
