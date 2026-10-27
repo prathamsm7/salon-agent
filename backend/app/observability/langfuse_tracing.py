@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import queue
 import re
 import threading
 import time
+import uuid
 from collections.abc import Callable
 from functools import lru_cache
 from typing import Any
@@ -13,7 +15,6 @@ from typing import Any
 from langfuse import get_client, propagate_attributes
 
 logger = logging.getLogger(__name__)
-_open_sessions: dict[str, Any] = {}
 _jobs: queue.Queue = queue.Queue()
 _worker_lock = threading.Lock()
 _worker_started = False
@@ -128,18 +129,100 @@ def _ids(session: dict) -> tuple[str | None, str | None]:
     return session_id, traced_user
 
 
-def _trace_context(session: dict) -> dict | None:
-    context = session.get("trace_context")
-    if not isinstance(context, dict) or not context.get("trace_id"):
-        return None
-    return {
-        "trace_id": context["trace_id"],
-        "parent_span_id": context.get("parent_span_id"),
+def _tags(session: dict) -> list[str]:
+    tags = ["salon-agent", "deepgram"]
+    conversation_id = session.get("conversation_id")
+    if conversation_id is not None and str(conversation_id) != "":
+        tags.append(f"conversation-{conversation_id}")
+    return tags
+
+
+def _propagate(session: dict, trace_name: str):
+    """Apply session id and tags before the span is created.
+
+    Langfuse only groups a trace into a session when session_id is present at
+    creation. Tags are immutable after that, so the conversation id has to be
+    included here too.
+    """
+    session_id, traced_user = _ids(session)
+    return propagate_attributes(
+        session_id=session_id,
+        user_id=traced_user,
+        tags=_tags(session),
+        trace_name=trace_name,
+    )
+
+
+def _metadata(session: dict, extra: dict | None = None) -> dict[str, Any]:
+    data: dict[str, Any] = {
+        "component": "salon-agent",
+        "conversation_id": str(session.get("conversation_id") or ""),
     }
+    if extra:
+        data.update(extra)
+    return data
+
+
+def _emit(session: dict, *, name: str, as_type: str, **kwargs: Any) -> None:
+    """Write one finished trace into this call's Langfuse session."""
+    metadata = _metadata(session, kwargs.pop("metadata", None))
+    try:
+        with _propagate(session, name):
+            with _client().start_as_current_observation(
+                name=name,
+                as_type=as_type,  # type: ignore[arg-type]
+                metadata=metadata,
+                **kwargs,
+            ):
+                pass
+        _client().flush()
+    except Exception:
+        logger.exception("Could not record Langfuse %s", name)
+
+
+def _think_model() -> str:
+    provider = os.getenv("THINK_PROVIDER", "").strip().lower()
+    if provider in {"openai", "open_ai"}:
+        return os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+    return "gemini-3.1-flash-lite"
+
+
+def _chat_message(role: str, content: str) -> dict[str, str]:
+    """Langfuse only replays messages that use role and content."""
+    mapped = {"user": "user", "assistant": "assistant", "system": "system", "tool": "tool"}.get(
+        role, "assistant"
+    )
+    return {"role": mapped, "content": _clip(content)}
+
+
+def _tool_messages(tool_name: str, arguments: Any, content: str) -> list[dict[str, Any]]:
+    tool_call_id = f"call_{uuid.uuid4().hex[:16]}"
+    arguments_json = json.dumps(safe_arguments(arguments), default=str)
+    return [
+        {
+            "role": "assistant",
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": tool_call_id,
+                    "type": "function",
+                    "name": tool_name,
+                    "arguments": arguments_json,
+                    "function": {"name": tool_name, "arguments": arguments_json},
+                }
+            ],
+        },
+        {
+            "role": "tool",
+            "tool_call_id": tool_call_id,
+            "name": tool_name,
+            "content": _clip(content),
+        },
+    ]
 
 
 def begin_session_trace(session: dict, greeting: str) -> None:
-    """Open one trace for this call. Later turns and tools attach to it."""
+    """Record the greeting as its own trace in this call's session."""
     greeting_text = greeting or ""
 
     def job() -> None:
@@ -149,40 +232,23 @@ def begin_session_trace(session: dict, greeting: str) -> None:
 
 
 def _begin_session_trace(session: dict, greeting: str) -> None:
-    if _trace_context(session):
+    if session.get("trace_context"):
         return
-    session_id, traced_user = _ids(session)
-    conversation_id = session.get("conversation_id")
-    try:
-        client = _client()
-        with client.start_as_current_observation(
-            name="salon.session",
-            as_type="span",
-            input={"greeting": _clip(greeting or "")},
-            metadata={
-                "component": "salon-agent",
-                "conversation_id": str(conversation_id or ""),
-            },
-            end_on_exit=False,
-        ) as span:
-            with propagate_attributes(
-                session_id=session_id,
-                user_id=traced_user,
-                tags=["salon-agent", "deepgram"],
-                trace_name="salon.session",
-            ):
-                span.update(metadata={"conversation_id": str(conversation_id or "")})
-            session["trace_context"] = {
-                "trace_id": span.trace_id,
-                "parent_span_id": span.id,
-            }
-            _open_sessions[span.trace_id] = span
-    except Exception:
-        logger.exception("Could not start Langfuse session")
+    # Marks this call so a second settings event does not greet twice.
+    session["trace_context"] = {"started": True}
+    if not greeting:
+        return
+    _emit(
+        session,
+        name="salon.session",
+        as_type="generation",
+        model=_think_model(),
+        output=[_chat_message("assistant", greeting)],
+    )
 
 
 def trace_turn(session: dict, role: str, content: str) -> None:
-    """Record one customer, Tara, or on-screen list inside the open session."""
+    """Record one customer, Tara, or on-screen list as its own session trace."""
     if not content:
         return
     text = content
@@ -194,29 +260,26 @@ def trace_turn(session: dict, role: str, content: str) -> None:
 
 
 def _trace_turn(session: dict, role: str, content: str) -> None:
-    context = _trace_context(session)
-    if not context or not content:
+    if not content:
         return
-    text = _clip(content)
-    session_id, traced_user = _ids(session)
-    payload = {"role": role, "text": text}
-    try:
-        with _client().start_as_current_observation(
-            trace_context=context,
+    message = _chat_message(role, content)
+    payload = [message]
+    if message["role"] == "user":
+        _emit(
+            session,
             name=f"salon.turn.{role}",
-            as_type="span",
-            input={"role": role} if role == "assistant" else payload,
-            output=payload,
-        ):
-            with propagate_attributes(
-                session_id=session_id,
-                user_id=traced_user,
-                tags=["salon-agent", "deepgram"],
-                trace_name="salon.session",
-            ):
-                pass
-    except Exception:
-        logger.exception("Could not record Langfuse turn")
+            as_type="generation",
+            model=_think_model(),
+            input=payload,
+        )
+        return
+    _emit(
+        session,
+        name=f"salon.turn.{role}",
+        as_type="generation",
+        model=_think_model(),
+        output=payload,
+    )
 
 
 def trace_thinking(session: dict, content: str) -> None:
@@ -232,28 +295,14 @@ def trace_thinking(session: dict, content: str) -> None:
 
 
 def _trace_thinking(session: dict, content: str) -> None:
-    context = _trace_context(session)
-    if not context or not content:
+    if not content:
         return
-    text = _clip(content)
-    session_id, traced_user = _ids(session)
-    try:
-        with _client().start_as_current_observation(
-            trace_context=context,
-            name="salon.agent.thinking",
-            as_type="span",
-            input={"role": "thinking"},
-            output={"text": text},
-        ):
-            with propagate_attributes(
-                session_id=session_id,
-                user_id=traced_user,
-                tags=["salon-agent", "deepgram"],
-                trace_name="salon.session",
-            ):
-                pass
-    except Exception:
-        logger.exception("Could not record Langfuse thinking")
+    _emit(
+        session,
+        name="salon.agent.thinking",
+        as_type="span",
+        output=_clip(content),
+    )
 
 
 def trace_session_error(session: dict, message: str) -> None:
@@ -267,32 +316,18 @@ def trace_session_error(session: dict, message: str) -> None:
 
 
 def _trace_session_error(session: dict, message: str) -> None:
-    context = _trace_context(session)
-    if not context:
-        return
-    session_id, traced_user = _ids(session)
-    try:
-        with _client().start_as_current_observation(
-            trace_context=context,
-            name="salon.error",
-            as_type="span",
-            input={"message": _clip(message, 1000)},
-            level="ERROR",
-            status_message="Voice session error",
-        ):
-            with propagate_attributes(
-                session_id=session_id,
-                user_id=traced_user,
-                tags=["salon-agent", "deepgram"],
-                trace_name="salon.session",
-            ):
-                pass
-    except Exception:
-        logger.exception("Could not record Langfuse session error")
+    _emit(
+        session,
+        name="salon.error",
+        as_type="span",
+        input={"message": _clip(message, 1000)},
+        level="ERROR",
+        status_message="Voice session error",
+    )
 
 
 def finish_session_trace(session: dict, reason: str | None) -> None:
-    """Close the session trace. A second close does nothing."""
+    """Flush this call's traces. A second close does nothing."""
 
     def job() -> None:
         _finish_session_trace(session, reason)
@@ -302,18 +337,22 @@ def finish_session_trace(session: dict, reason: str | None) -> None:
 
 def _finish_session_trace(session: dict, reason: str | None) -> None:
     context = session.get("trace_context")
-    if not isinstance(context, dict) or context.get("closed"):
-        return
-    context["closed"] = True
-    span = _open_sessions.pop(context.get("trace_id") or "", None)
-    if span is None:
-        return
+    if isinstance(context, dict):
+        if context.get("closed"):
+            return
+        context["closed"] = True
     try:
-        span.update(
-            output={"end_reason": reason or "closed"},
-            status_message=reason or "closed",
-        )
-        span.end()
+        # End reason stays in metadata. An output object is what the session
+        # view renders as "JSON-only" instead of the conversation.
+        if reason:
+            _emit(
+                session,
+                name="salon.session.end",
+                as_type="span",
+                metadata={"end_reason": reason},
+                status_message=reason,
+            )
+            return
         _client().flush()
     except Exception:
         logger.exception("Could not finish Langfuse session")
@@ -380,55 +419,47 @@ def _record_tool(
     tool_name: str,
     trace_input: dict,
     conversation_id: Any,
-    user_id: Any,
+    _user_id: Any,
     elapsed_ms: float,
     result: str | None = None,
     error_type: str | None = None,
 ) -> None:
-    client = _client()
-    with client.start_as_current_observation(
-        trace_context=_trace_context(session),
-        as_type="tool",
+    if error_type:
+        content = f"Tool error in {tool_name}: {error_type}"
+        level = "ERROR"
+        status = "Unhandled tool exception"
+        tool_error = True
+    else:
+        content = redact_text(str(result))
+        tool_error = content.startswith(
+            (
+                "Tool error in ",
+                "Bad arguments for ",
+                "Unknown function: ",
+            )
+        )
+        level = "ERROR" if tool_error else "DEFAULT"
+        status = "Tool returned an error" if tool_error else "Success"
+
+    call_message, result_message = _tool_messages(
+        tool_name,
+        trace_input.get("arguments", {}),
+        content,
+    )
+    _emit(
+        session,
         name=f"salon.tool.{tool_name}",
-        input=trace_input,
+        as_type="tool",
+        input=[call_message],
+        output=[result_message],
         metadata={
-            "component": "salon-agent",
             "conversation_id": str(conversation_id or ""),
+            "duration_ms": elapsed_ms,
+            "tool_error": tool_error,
         },
-    ) as observation:
-        with propagate_attributes(
-            session_id=(
-                f"salon-conversation-{conversation_id}"
-                if conversation_id
-                else None
-            ),
-            user_id=f"salon-user-{user_id}" if user_id else None,
-            tags=["salon-agent", "deepgram"],
-        ):
-            if error_type:
-                observation.update(
-                    output={"error_type": error_type},
-                    metadata={"duration_ms": elapsed_ms, "tool_error": True},
-                    level="ERROR",
-                    status_message="Unhandled tool exception",
-                )
-                return
-            is_error = str(result).startswith(
-                (
-                    "Tool error in ",
-                    "Bad arguments for ",
-                    "Unknown function: ",
-                )
-            )
-            observation.update(
-                output={"result": redact_text(str(result))},
-                metadata={
-                    "duration_ms": elapsed_ms,
-                    "tool_error": is_error,
-                },
-                level="ERROR" if is_error else "DEFAULT",
-                status_message="Tool returned an error" if is_error else "Success",
-            )
+        level=level,
+        status_message=status,
+    )
 
 
 def flush_langfuse() -> None:
