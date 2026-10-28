@@ -15,7 +15,7 @@ const WORKLET_SOURCE = `
 class PcmProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
-    this.buffer = new Float32Array(4096);
+    this.buffer = new Float32Array(960);
     this.offset = 0;
   }
 
@@ -79,27 +79,36 @@ function floatToPcm16(input: Float32Array): ArrayBuffer {
 }
 
 export type LiveMic = {
+  context: AudioContext;
   setSender: (send: ((pcm: ArrayBuffer) => void) | null) => void;
+  releaseCapture: () => void;
   stop: () => void;
 };
 
 export async function openMicrophone(): Promise<LiveMic> {
+  // Resume inside the click, before the permission prompt can suspend capture.
   const capture = new AudioContext();
+  void capture.resume();
   let sender: ((pcm: ArrayBuffer) => void) | null = null;
-  let stopped = false;
+  let captureReleased = false;
   let stream: MediaStream;
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
+        autoGainControl: true,
         channelCount: 1,
       },
     });
+    await capture.resume();
   } catch (error) {
     void capture.close();
     throw error;
   }
+  capture.onstatechange = () => {
+    if (capture.state === "suspended") void capture.resume();
+  };
   const workletUrl = URL.createObjectURL(
     new Blob([WORKLET_SOURCE], { type: "application/javascript" })
   );
@@ -117,7 +126,7 @@ export async function openMicrophone(): Promise<LiveMic> {
   const mute = capture.createGain();
   mute.gain.value = 0;
   processor.port.onmessage = (event: MessageEvent<Float32Array>) => {
-    if (!sender || stopped) return;
+    if (captureReleased || !sender) return;
     const pcm = downsampleToPcm16(event.data, capture.sampleRate);
     if (pcm.byteLength) sender(pcm);
   };
@@ -125,20 +134,27 @@ export async function openMicrophone(): Promise<LiveMic> {
   processor.connect(mute);
   mute.connect(capture.destination);
 
+  function releaseCapture() {
+    if (captureReleased) return;
+    captureReleased = true;
+    sender = null;
+    processor.port.onmessage = null;
+    processor.disconnect();
+    source.disconnect();
+    mute.disconnect();
+    stream.getTracks().forEach((track) => track.stop());
+  }
+
   return {
+    context: capture,
     setSender(send) {
       sender = send;
     },
+    releaseCapture,
     stop() {
-      if (stopped) return;
-      stopped = true;
-      sender = null;
-      processor.port.onmessage = null;
-      processor.disconnect();
-      source.disconnect();
-      mute.disconnect();
-      stream.getTracks().forEach((track) => track.stop());
-      void capture.close();
+      releaseCapture();
+      capture.onstatechange = null;
+      if (capture.state !== "closed") void capture.close();
     },
   };
 }
@@ -152,16 +168,21 @@ export function connectVoice(
   const socket = new WebSocket(voiceSocketUrl(token, conversationId));
   socket.binaryType = "arraybuffer";
 
-  let playback = new AudioContext();
+  // Play Tara in the capture context so echo cancellation can remove her voice.
+  const playback = mic.context;
   let nextPlayTime = 0;
   let unlocked = false;
   let agentSpeaking = false;
   let closing = false;
   let becameLive = false;
   let reportedError = false;
+  let keepPlayback = false;
+  let ignoreAgentAudio = false;
+  const playing: AudioBufferSourceNode[] = [];
   handlers.onMic(true);
   mic.setSender((pcm) => {
-    if (closing || agentSpeaking || socket.readyState !== WebSocket.OPEN) return;
+    // The mic stays open while Tara speaks so the guest can interrupt her.
+    if (closing || socket.readyState !== WebSocket.OPEN) return;
     socket.send(pcm);
   });
   const pendingAudio: ArrayBuffer[] = [];
@@ -206,8 +227,24 @@ export function connectVoice(
     armQuiet();
   }
 
+  function stopPlayback() {
+    ignoreAgentAudio = true;
+    pendingAudio.length = 0;
+    nextPlayTime = playback.currentTime;
+    for (const source of playing) {
+      try {
+        source.stop();
+      } catch {
+        /* This chunk already finished. */
+      }
+    }
+    playing.length = 0;
+    agentSpeaking = false;
+    if (!closing && becameLive) handlers.onStatus("live");
+  }
+
   function playPcm(bytes: ArrayBuffer) {
-    if (playback.state === "closed") return;
+    if (ignoreAgentAudio || playback.state === "closed") return;
     const samples = new Int16Array(bytes);
     if (!samples.length) return;
     const floats = new Float32Array(samples.length);
@@ -219,6 +256,11 @@ export function connectVoice(
     const source = playback.createBufferSource();
     source.buffer = buffer;
     source.connect(playback.destination);
+    source.onended = () => {
+      const index = playing.indexOf(source);
+      if (index >= 0) playing.splice(index, 1);
+    };
+    playing.push(source);
     const startAt = Math.max(playback.currentTime, nextPlayTime);
     source.start(startAt);
     nextPlayTime = startAt + buffer.duration;
@@ -227,7 +269,7 @@ export function connectVoice(
 
   function releaseMic() {
     mic.setSender(null);
-    mic.stop();
+    mic.releaseCapture();
     handlers.onMic(false);
   }
 
@@ -243,7 +285,7 @@ export function connectVoice(
     } else {
       handlers.onStatus("idle");
     }
-    void playback.close();
+    mic.stop();
   }
 
   socket.onmessage = (event) => {
@@ -275,6 +317,7 @@ export function connectVoice(
 
     if (message.type === "status" && message.state === "ended") {
       becameLive = true;
+      keepPlayback = true;
       releaseMic();
       const delay = Math.max(0, (nextPlayTime - playback.currentTime) * 1000);
       window.setTimeout(() => endSession(), delay + 250);
@@ -294,12 +337,21 @@ export function connectVoice(
       handlers.onStatus("connecting");
       return;
     }
+    if (message.type === "barge_in") {
+      stopPlayback();
+      return;
+    }
     if (message.type === "speaking") {
-      if (message.value) markAudible();
-      else markQuiet();
+      if (message.value) {
+        ignoreAgentAudio = false;
+        markAudible();
+      } else markQuiet();
       return;
     }
     if (message.type === "transcript" && message.role && message.content) {
+      // Deepgram does not send AgentStartedSpeaking on later replies. Without this,
+      // a typed message mutes every response after the greeting.
+      if (message.role === "assistant") ignoreAgentAudio = false;
       handlers.onTranscript(message.role, message.content);
       return;
     }
@@ -323,6 +375,7 @@ export function connectVoice(
   socket.onclose = () => {
     releaseMic();
     window.clearTimeout(drainTimer);
+    if (!keepPlayback) mic.stop();
     if (closing) {
       handlers.onStatus("idle");
       return;

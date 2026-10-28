@@ -67,7 +67,7 @@ def _elevenlabs_voice_settings(api_key: str, voice_id: str) -> SpeakSettingsV1:
         endpoint=SpeakSettingsV1Endpoint(
             url=(
                 "wss://api.elevenlabs.io/v1/text-to-speech/"
-                f"{voice_id}/multi-stream-input?output_format=pcm_24000"
+                f"{voice_id}/multi-stream-input"
             ),
             headers={"xi-api-key": api_key},
         ),

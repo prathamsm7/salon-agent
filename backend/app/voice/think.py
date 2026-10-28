@@ -8,6 +8,7 @@ import os
 from deepgram.types.think_settings_v1 import ThinkSettingsV1
 from deepgram.types.think_settings_v1endpoint import ThinkSettingsV1Endpoint
 from deepgram.types.think_settings_v1provider import (
+    ThinkSettingsV1Provider_Anthropic,
     ThinkSettingsV1Provider_Google,
     ThinkSettingsV1Provider_OpenAi,
 )
@@ -18,9 +19,16 @@ from app.voice.speak import speaks_bilingual
 logger = logging.getLogger("uvicorn.error")
 
 
+ANTHROPIC_MODEL = "claude-sonnet-5-5"
+
+
+def _think_provider() -> str:
+    return os.environ.get("THINK_PROVIDER", "").strip().lower()
+
+
 def _use_openai_byo() -> bool:
     """THINK_PROVIDER=openai sends think calls to your OpenAI key."""
-    return os.environ.get("THINK_PROVIDER", "").strip().lower() in {"openai", "open_ai"}
+    return _think_provider() in {"openai", "open_ai"}
 
 
 def _openai_model() -> str:
@@ -28,8 +36,18 @@ def _openai_model() -> str:
 
 
 def think_settings(caller_name: str, recap: str) -> ThinkSettingsV1:
-    """Google stays the default. OpenAI BYO bills and logs on your OpenAI account."""
+    """Anthropic when THINK_PROVIDER=anthropic. OpenAI BYO bills your key. Google otherwise."""
     prompt = system_prompt(caller_name, recap, bilingual=speaks_bilingual())
+    if _think_provider() == "anthropic":
+        logger.info("Think provider is Anthropic model %s.", ANTHROPIC_MODEL)
+        return ThinkSettingsV1(
+            provider=ThinkSettingsV1Provider_Anthropic(
+                type="anthropic",
+                model=ANTHROPIC_MODEL,
+            ),
+            prompt=prompt,
+            functions=SALON_SUPPORT_FUNCTIONS,
+        )
     if not _use_openai_byo():
         return ThinkSettingsV1(
             provider=ThinkSettingsV1Provider_Google(

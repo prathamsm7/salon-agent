@@ -81,7 +81,7 @@ export function statusLabel(
   if (status === "checking-mic") return "Checking your microphone";
   if (status === "connecting") return "Microphone ready. Opening the line";
   if (status === "speaking") {
-    return micOn ? "Tara is speaking. Microphone paused." : "Tara is speaking";
+    return micOn ? "Tara is speaking. You can interrupt." : "Tara is speaking";
   }
   if (status === "live") {
     return micOn ? "Listening" : "Connected. Speak or type.";

@@ -104,6 +104,7 @@ class DeepgramSalonSession:
         self._end_reason: str | None = None
         self._end_deadline: float | None = None
         self._finished = False
+        self._send_failed = False
 
     def start(self) -> None:
         ensure_services_indexed()
@@ -137,12 +138,16 @@ class DeepgramSalonSession:
             self.agent.send_inject_user_message(AgentV1InjectUserMessage(content=content))
 
     def send_audio(self, audio: bytes) -> None:
-        if not self.agent or not audio:
+        if not self.agent or not audio or self._send_failed:
             return
         # The mic streams while the guest is on the call, including while they speak.
         self._note_user_speech()
-        with self._send_lock:
-            self.agent.send_media(audio)
+        try:
+            with self._send_lock:
+                if self.agent:
+                    self.agent.send_media(audio)
+        except Exception as exc:
+            self._fail_send(exc)
 
     def close(self) -> None:
         if not self._open and self._agent_cm is None:
@@ -163,6 +168,8 @@ class DeepgramSalonSession:
     def _settings(self) -> AgentV1Settings:
         return AgentV1Settings(
             audio=AgentV1SettingsAudio(
+                # The browser downsamples the microphone to 24 kHz. A higher rate here
+                # makes speech unintelligible, so typed messages still work and voice does not.
                 input=AgentV1SettingsAudioInput(encoding="linear16", sample_rate=24000),
                 output=AgentV1SettingsAudioOutput(
                     encoding="linear16", sample_rate=24000, container="none"
@@ -173,7 +180,8 @@ class DeepgramSalonSession:
                     provider=AgentV1SettingsAgentListenProvider_V1(
                         type="deepgram",
                         model="nova-3",
-                        language="multi",
+                        # multi writes Indian English in Telugu or Gujarati script. en-IN stays English.
+                        language="en-IN",
                         smart_format=True,
                         # Silence before the guest is treated as finished. Extra listen fields are rejected.
                         endpointing=500,
@@ -201,7 +209,20 @@ class DeepgramSalonSession:
             ),
         )
 
+    def _fail_send(self, exc: Exception) -> None:
+        if self._send_failed:
+            return
+        self._send_failed = True
+        logger.exception("Voice audio send failed conversation=%s", self.conversation_id)
+        self._emit("json", {"type": "error", "message": "The voice line dropped while sending audio."})
+
     def _on_message(self, message: Any) -> None:
+        try:
+            self._on_message_inner(message)
+        except Exception:
+            logger.exception("Voice event handler failed conversation=%s", self.conversation_id)
+
+    def _on_message_inner(self, message: Any) -> None:
         if isinstance(message, bytes):
             # Audio is still arriving, so this is not a quiet stretch.
             self._note_activity()
@@ -248,6 +269,8 @@ class DeepgramSalonSession:
                 trace_thinking(self.salon, content)
         elif msg_type == "UserStartedSpeaking":
             self._note_user_speech()
+            # The guest talked over Tara. The browser stops her buffered audio.
+            self._emit("json", {"type": "barge_in"})
         elif msg_type == "AgentStartedSpeaking":
             self._agent_speaking = True
             self._quiet_since = None
@@ -405,10 +428,11 @@ class DeepgramSalonSession:
         self.close()
 
     def _on_deepgram_close(self) -> None:
+        reason = self._end_reason or "dropped"
         logger.info(
             "Deepgram socket closed conversation=%s reason=%s",
             self.conversation_id,
-            self._end_reason or "dropped",
+            reason,
         )
         if self._end_reason:
             return

@@ -52,7 +52,7 @@ export function ChatComposer({ status, micOn, input, error, startLabel = "Start 
         <form className="kk-live-composer" onSubmit={(event) => { event.preventDefault(); onSend(); }}>
           <div className="kk-live-status-row">
             <span className={`kk-listening-pill ${status === "speaking" ? "is-speaking" : ""}`}>
-              <span className="kk-live-dot" />{status === "speaking" ? "Tara is speaking" : micOn ? "Listening to you" : "Voice connected"}
+              <span className="kk-live-dot" />{status === "speaking" ? "Tara is speaking · mic stays on" : micOn ? "Listening to you" : "Voice connected"}
             </span>
             <button type="button" className="kk-end-button" onClick={onEnd}><StopIcon /> End session</button>
           </div>
@@ -67,7 +67,7 @@ export function ChatComposer({ status, micOn, input, error, startLabel = "Start 
             />
             <button type="submit" className="kk-send-button" disabled={!sessionOpen || !input.trim()} aria-label="Send message"><SendIcon /></button>
           </div>
-          <p className="kk-composer-hint">Speak naturally, or type a message. Your appointment is not booked until you confirm.</p>
+          <p className="kk-composer-hint">Speak whenever you want, including while Tara is talking.</p>
         </form>
       )}
     </div>

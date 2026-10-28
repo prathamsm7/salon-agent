@@ -184,6 +184,10 @@ def _think_model() -> str:
     provider = os.getenv("THINK_PROVIDER", "").strip().lower()
     if provider in {"openai", "open_ai"}:
         return os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+    if provider == "anthropic":
+        from app.voice.think import ANTHROPIC_MODEL
+
+        return ANTHROPIC_MODEL
     return "gemini-3.1-flash-lite"
 
 

@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import logging
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
@@ -11,6 +12,7 @@ from app.db.store import VoiceDenied, prepare_voice
 from app.voice.deepgram_session import DeepgramSalonSession
 
 router = APIRouter()
+logger = logging.getLogger("uvicorn.error")
 
 
 @router.websocket("/voice")
@@ -72,6 +74,8 @@ async def voice(websocket: WebSocket) -> None:
                 await _handle_text(session, text)
     except WebSocketDisconnect:
         pass
+    except Exception:
+        logger.exception("Voice browser loop failed conversation=%s", opened["conversation_id"])
     finally:
         await asyncio.to_thread(session.close)
         try:
